@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'bihash'
 
 describe Bihash do
-  describe '#new' do
+  describe '::new' do
     it 'should be able to create an empty bihash' do
       assert_empty Bihash.new
     end

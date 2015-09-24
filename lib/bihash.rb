@@ -4,16 +4,16 @@ class Bihash
       raise ArgumentError, "Converting #{hash} to Bihash creates duplicate keys"
     end
     @forward = hash
-    @backward = hash.invert
+    @reverse = hash.invert
   end
 
   def [](key)
-    @forward.has_key?(key) ? @forward[key] : @backward[key]
+    @forward.has_key?(key) ? @forward[key] : @reverse[key]
   end
 
   def []=(key1, key2)
     @forward[key1] = key2
-    @backward[key2] = key1
+    @reverse[key2] = key1
   end
 
   def empty?
