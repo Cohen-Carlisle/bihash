@@ -1,5 +1,5 @@
 class Bihash
-  def initialize(hash)
+  def initialize(hash={})
     if (hash.keys | hash.values).count != hash.keys.count * 2
       raise ArgumentError, "Converting #{hash} to Bihash creates duplicate keys"
     end
@@ -9,5 +9,9 @@ class Bihash
 
   def [](key)
     @forward[key] || @backward[key]
+  end
+
+  def empty?
+    @forward.empty?
   end
 end
