@@ -8,7 +8,7 @@ class Bihash
   end
 
   def [](key)
-    @forward[key] || @backward[key]
+    @forward.has_key?(key) ? @forward[key] : @backward[key]
   end
 
   def []=(key1, key2)

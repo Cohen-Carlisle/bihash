@@ -20,6 +20,18 @@ describe Bihash do
     end
   end
 
+  describe '#[]' do
+    it 'should return falsey values correctly' do
+      bh1 = Bihash.new({nil => false})
+      bh1[nil].must_equal false
+      bh1[false].must_equal nil
+
+      bh2 = Bihash.new({false => nil})
+      bh2[false].must_equal nil
+      bh2[nil].must_equal false
+    end
+  end
+
   describe '#[]=' do
     it 'should allow assignment of new pairs' do
       bh = Bihash.new
