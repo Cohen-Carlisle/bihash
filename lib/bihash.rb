@@ -11,6 +11,11 @@ class Bihash
     @forward[key] || @backward[key]
   end
 
+  def []=(key1, key2)
+    @forward[key1] = key2
+    @backward[key2] = key1
+  end
+
   def empty?
     @forward.empty?
   end

@@ -19,4 +19,13 @@ describe Bihash do
       -> { Bihash.new({:k1 => 'val', :k2 => 'val'}) }.must_raise ArgumentError
     end
   end
+
+  describe '#[]=' do
+    it 'should allow assignment of new pairs' do
+      bh = Bihash.new
+      bh[:key] = 'value'
+      bh[:key].must_equal 'value'
+      bh['value'].must_equal :key
+    end
+  end
 end
