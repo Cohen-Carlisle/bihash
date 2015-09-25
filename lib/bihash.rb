@@ -1,22 +1,19 @@
+require 'forwardable'
+
 class Bihash
+  extend Forwardable
+
+  def_delegators :@hash, :[], :empty?
+
   def initialize(hash={})
     if (hash.keys | hash.values).count != hash.keys.count * 2
       raise ArgumentError, "Converting #{hash} to Bihash creates duplicate keys"
     end
-    @forward = hash
-    @reverse = hash.invert
-  end
-
-  def [](key)
-    @forward.has_key?(key) ? @forward[key] : @reverse[key]
+    @hash = hash.merge(hash.invert)
   end
 
   def []=(key1, key2)
-    @forward[key1] = key2
-    @reverse[key2] = key1
-  end
-
-  def empty?
-    @forward.empty?
+    @hash[key2] = key1
+    @hash[key1] = key2
   end
 end
