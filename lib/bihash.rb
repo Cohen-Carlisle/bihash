@@ -16,4 +16,11 @@ class Bihash
     @hash[key2] = key1
     @hash[key1] = key2
   end
+
+  def delete(key)
+    if @hash.key?(key)
+      @hash.delete(@hash[key])
+      @hash.delete(key)
+    end
+  end
 end

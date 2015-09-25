@@ -40,4 +40,15 @@ describe Bihash do
       bh['value'].must_equal :key
     end
   end
+
+  describe '#delete' do
+    it 'should remove both keys' do
+      bh1 = Bihash.new({:key => 'value'})
+      bh1.delete(:key)
+      assert_empty bh1
+      bh2 = Bihash.new({:key => 'value'})
+      bh2.delete('value')
+      assert_empty bh2
+    end
+  end
 end
