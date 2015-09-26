@@ -13,6 +13,8 @@ class Bihash
   end
 
   def []=(key1, key2)
+    delete(key1)
+    delete(key2)
     @hash[key2] = key1
     @hash[key1] = key2
   end

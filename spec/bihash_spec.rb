@@ -39,6 +39,14 @@ describe Bihash do
       bh[:key].must_equal 'value'
       bh['value'].must_equal :key
     end
+
+    it 'should remove old pairs if old keys are re-assigned' do
+      bh = Bihash.new({1 => 'one', 2 => 'two'})
+      bh[1] = 'uno'
+      bh[1].must_equal 'uno'
+      bh['uno'].must_equal 1
+      bh['one'].must_equal nil
+    end
   end
 
   describe '#delete' do
