@@ -15,8 +15,12 @@ describe Bihash do
       bh['value'].must_equal :key
     end
 
-    it 'should not accept hashes that would result in duplicate keys' do
+    it 'should not accept a hash with duplicate values' do
       -> { Bihash.new({:k1 => 'val', :k2 => 'val'}) }.must_raise ArgumentError
+    end
+
+    it 'should accept a hash where a key equals its value' do
+      Bihash.new({:key => :key})[:key].must_equal :key
     end
   end
 
