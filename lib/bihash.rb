@@ -9,7 +9,7 @@ class Bihash
     if hash.values.uniq.count != hash.keys.count
       raise ArgumentError, "Hash #{hash} contains duplicate values"
     end
-    @hash = hash.merge(hash.invert)
+    @hash = hash.invert.merge(hash)
   end
 
   def []=(key1, key2)

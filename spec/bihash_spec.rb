@@ -22,6 +22,13 @@ describe Bihash do
     it 'should accept a hash where a key equals its value' do
       Bihash.new({:key => :key})[:key].must_equal :key
     end
+
+    it "should maintain the returned value's id if key-value pairs are equal" do
+      key, value = [], []
+      bh = Bihash.new({key => value})
+      bh[key].object_id.must_equal value.object_id
+      bh[value].object_id.must_equal value.object_id
+    end
   end
 
   describe '#[]' do
@@ -50,6 +57,14 @@ describe Bihash do
       bh[1].must_equal 'uno'
       bh['uno'].must_equal 1
       bh['one'].must_equal nil
+    end
+
+    it "should maintain the returned value's id if key-value pairs are equal" do
+      key, value = [], []
+      bh = Bihash.new
+      bh[key] = value
+      bh[key].object_id.must_equal value.object_id
+      bh[value].object_id.must_equal value.object_id
     end
   end
 
