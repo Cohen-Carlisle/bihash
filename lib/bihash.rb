@@ -6,7 +6,7 @@ class Bihash
   def_delegators :@hash, :[], :empty?
 
   def initialize(hash={})
-    if hash.values.uniq.count != hash.keys.count
+    if hash.values.uniq.length != hash.length
       raise ArgumentError, "Hash #{hash} contains duplicate values"
     end
     @hash = hash.invert.merge(hash)
