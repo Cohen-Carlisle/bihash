@@ -6,7 +6,9 @@ require 'bihash'
 describe Bihash do
   describe '::new' do
     it 'should be able to create an empty bihash' do
-      assert_empty Bihash.new
+      bh = Bihash.new
+      assert_empty bh.instance_variable_get(:@forward)
+      assert_empty bh.instance_variable_get(:@reverse)
     end
 
     it 'should convert a hash to a bihash' do
@@ -72,10 +74,12 @@ describe Bihash do
     it 'should remove both keys' do
       bh1 = Bihash.new({:key => 'value'})
       bh1.delete(:key)
-      assert_empty bh1
+      bh1[:key].must_equal nil
+      bh1['value'].must_equal nil
       bh2 = Bihash.new({:key => 'value'})
       bh2.delete('value')
-      assert_empty bh2
+      bh1[:key].must_equal nil
+      bh1['value'].must_equal nil
     end
   end
 end
