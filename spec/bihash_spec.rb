@@ -82,4 +82,12 @@ describe Bihash do
       bh1['value'].must_equal nil
     end
   end
+
+  describe '#each' do
+    it 'should iterate over each pair in the bihash' do
+      array = []
+      Bihash.new({:k1 => 'v1', :k2 => 'v2'}).each { |pair| array << pair }
+      array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
+    end
+  end
 end

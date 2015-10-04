@@ -1,4 +1,11 @@
+require 'forwardable'
+
 class Bihash
+  include Enumerable
+  extend Forwardable
+
+  def_delegator :@forward, :each
+
   def initialize(hash={})
     if hash.values.uniq.length != hash.length
       raise ArgumentError, "Hash #{hash} contains duplicate values"
