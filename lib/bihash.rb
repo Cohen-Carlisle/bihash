@@ -1,10 +1,5 @@
-require 'forwardable'
-
 class Bihash
   include Enumerable
-  extend Forwardable
-
-  def_delegator :@forward, :each
 
   def initialize(hash={})
     if hash.values.uniq.length != hash.length
@@ -32,6 +27,15 @@ class Bihash
     elsif @reverse.key?(key)
       @forward.delete(@reverse[key])
       @reverse.delete(key)
+    end
+  end
+
+  def each(&block)
+    if block_given?
+      @forward.each(&block)
+      self
+    else
+      @forward.each
     end
   end
 end

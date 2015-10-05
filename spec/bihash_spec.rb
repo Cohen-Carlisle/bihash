@@ -89,5 +89,15 @@ describe Bihash do
       Bihash.new({:k1 => 'v1', :k2 => 'v2'}).each { |pair| array << pair }
       array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
     end
+
+    it 'should return the bihash if given a block' do
+      bh = Bihash.new
+      bh.each { |p| }.must_be_instance_of Bihash
+      bh.each { |p| }.object_id.must_equal bh.object_id
+    end
+
+    it 'should return an enumerator if not given a block' do
+      Bihash.new.each.must_be_instance_of Enumerator
+    end
   end
 end
