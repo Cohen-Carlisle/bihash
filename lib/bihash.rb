@@ -13,6 +13,11 @@ class Bihash
     Bihash.new(Hash[*args])
   end
 
+  def self.try_convert(arg)
+    h = Hash.try_convert(arg)
+    h ? Bihash[h] : nil
+  end
+
   def [](key)
     @forward.key?(key) ? @forward[key] : @reverse[key]
   end

@@ -71,6 +71,16 @@ describe Bihash do
     end
   end
 
+  describe '::try_convert' do
+    it 'should convert an object to a Bihash if it responds to #to_hash' do
+      Bihash.try_convert(:k1 => 1, :k2 => 2).must_equal Bihash[:k1, 1, :k2, 2]
+    end
+
+    it 'should return nil if the object does not repond to #to_hash' do
+      Bihash.try_convert(Object.new).must_equal nil
+    end
+  end
+
   describe '#[]' do
     it 'should return falsey values correctly' do
       bh1 = Bihash.new(nil => false)
