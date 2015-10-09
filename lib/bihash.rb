@@ -38,4 +38,8 @@ class Bihash
       @forward.each
     end
   end
+
+  def ==(other)
+    other.is_a?(Bihash) && other.instance_variable_get(:@forward) == @forward
+  end
 end

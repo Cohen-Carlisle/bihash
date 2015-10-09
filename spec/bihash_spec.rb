@@ -100,4 +100,16 @@ describe Bihash do
       Bihash.new.each.must_be_instance_of Enumerator
     end
   end
+
+  describe '#==' do
+    it 'should return true when two bihashes have the same pairs' do
+      bh1, bh2 = Bihash.new(:k1 => 1, :k2 => 2), Bihash.new(:k1 => 1, :k2 => 2)
+      (bh1 == bh2).must_equal true
+    end
+
+    it 'should return false when two bihashes do not have the same pairs' do
+      bh1, bh2 = Bihash.new(:k1 => 1, :k2 => 2), Bihash.new(:k1 => 1, :k2 => 99)
+      (bh1 == bh2).must_equal false
+    end
+  end
 end
