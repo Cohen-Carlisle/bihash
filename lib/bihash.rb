@@ -9,6 +9,10 @@ class Bihash
     @forward = hash
   end
 
+  def self.[](*args)
+    Bihash.new(Hash[*args])
+  end
+
   def [](key)
     @forward.key?(key) ? @forward[key] : @reverse[key]
   end

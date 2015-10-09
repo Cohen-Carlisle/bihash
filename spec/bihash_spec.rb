@@ -33,6 +33,44 @@ describe Bihash do
     end
   end
 
+  describe '::[]' do
+    it 'should be able to create an empty bihash' do
+      bh = Bihash[]
+      assert_empty bh.instance_variable_get(:@forward)
+      assert_empty bh.instance_variable_get(:@reverse)
+    end
+
+    it 'should convert a hash to a bihash' do
+      bh = Bihash[:key => 'value']
+      bh[:key].must_equal 'value'
+      bh['value'].must_equal :key
+    end
+
+    it 'should not accept a hash with duplicate values' do
+      -> { Bihash[:k1 => 'val', :k2 => 'val'] }.must_raise ArgumentError
+    end
+
+    it 'should accept a hash where a key equals its value' do
+      Bihash[:key => :key][:key].must_equal :key
+    end
+
+    it "should maintain the returned value's id if key-value pairs are equal" do
+      key, value = [], []
+      bh = Bihash[key => value]
+      bh[key].object_id.must_equal value.object_id
+      bh[value].object_id.must_equal value.object_id
+    end
+
+    it "should accept an even number of arguments" do
+      Bihash[:k1, 1, :k2, 2].must_equal Bihash[:k1 => 1, :k2 => 2]
+    end
+
+    it "should accept an array key-value pairs packaged in arrays" do
+      array1 = [[:k1, 1], [:k2, 2]]
+      Bihash[array1].must_equal Bihash[:k1 => 1, :k2 => 2]
+    end
+  end
+
   describe '#[]' do
     it 'should return falsey values correctly' do
       bh1 = Bihash.new(nil => false)
