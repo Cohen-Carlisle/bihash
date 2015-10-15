@@ -83,11 +83,11 @@ describe Bihash do
 
   describe '#[]' do
     it 'should return falsey values correctly' do
-      bh1 = Bihash.new(nil => false)
+      bh1 = Bihash[nil => false]
       bh1[nil].must_equal false
       bh1[false].must_equal nil
 
-      bh2 = Bihash.new(false => nil)
+      bh2 = Bihash[false => nil]
       bh2[false].must_equal nil
       bh2[nil].must_equal false
     end
@@ -102,7 +102,7 @@ describe Bihash do
     end
 
     it 'should remove old pairs if old keys are re-assigned' do
-      bh = Bihash.new(1 => 'one', 2 => 'two')
+      bh = Bihash[1 => 'one', 2 => 'two']
       bh[1] = 'uno'
       bh[1].must_equal 'uno'
       bh['uno'].must_equal 1
@@ -120,11 +120,11 @@ describe Bihash do
 
   describe '#delete' do
     it 'should remove both keys' do
-      bh1 = Bihash.new(:key => 'value')
+      bh1 = Bihash[:key => 'value']
       bh1.delete(:key)
       bh1[:key].must_equal nil
       bh1['value'].must_equal nil
-      bh2 = Bihash.new(:key => 'value')
+      bh2 = Bihash[:key => 'value']
       bh2.delete('value')
       bh1[:key].must_equal nil
       bh1['value'].must_equal nil
@@ -134,7 +134,7 @@ describe Bihash do
   describe '#each' do
     it 'should iterate over each pair in the bihash' do
       array = []
-      Bihash.new(:k1 => 'v1', :k2 => 'v2').each { |pair| array << pair }
+      Bihash[:k1 => 'v1', :k2 => 'v2'].each { |pair| array << pair }
       array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
     end
 
@@ -151,12 +151,12 @@ describe Bihash do
 
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
-      bh1, bh2 = Bihash.new(:k1 => 1, :k2 => 2), Bihash.new(:k1 => 1, :k2 => 2)
+      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 2]
       (bh1 == bh2).must_equal true
     end
 
     it 'should return false when two bihashes do not have the same pairs' do
-      bh1, bh2 = Bihash.new(:k1 => 1, :k2 => 2), Bihash.new(:k1 => 1, :k2 => 99)
+      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 99]
       (bh1 == bh2).must_equal false
     end
   end
