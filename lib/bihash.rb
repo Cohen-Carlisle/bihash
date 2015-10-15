@@ -1,12 +1,9 @@
 class Bihash
   include Enumerable
 
-  def initialize(hash={})
-    if hash.values.uniq.length != hash.length
-      raise ArgumentError, "Hash #{hash} contains duplicate values"
-    end
-    @reverse = hash.invert
-    @forward = hash
+  def initialize(*args, &block)
+    @reverse = Hash.new(*args, &block)
+    @forward = Hash.new
   end
 
   def self.[](*args)

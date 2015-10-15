@@ -5,31 +5,27 @@ require 'bihash'
 
 describe Bihash do
   describe '::new' do
-    it 'should be able to create an empty bihash' do
+    it 'should create an empty bihash with a default of nil if no args' do
       bh = Bihash.new
-      assert_empty bh.instance_variable_get(:@forward)
-      assert_empty bh.instance_variable_get(:@reverse)
+      bh[:not_a_key].must_equal nil
     end
 
-    it 'should convert a hash to a bihash' do
-      bh = Bihash.new(:key => 'value')
-      bh[:key].must_equal 'value'
-      bh['value'].must_equal :key
+    it 'should create an empty bihash with a default if given an object arg' do
+      bh = Bihash.new('default')
+      bh[:not_a_key].must_equal 'default'
+      bh[:not_a_key].tr!('ealt', '3417')
+      bh[:still_not_a_key].must_equal 'd3f4u17'
     end
 
-    it 'should not accept a hash with duplicate values' do
-      -> { Bihash.new(:k1 => 'val', :k2 => 'val') }.must_raise ArgumentError
+    it 'should create an empty bihash with a default if given a block arg' do
+      bh = Bihash.new { 'd3f4u17' }
+      bh[:not_a_key].must_equal 'd3f4u17'
+      bh[:not_a_key].tr!('3417', 'ealt')
+      bh[:still_not_a_key].must_equal 'd3f4u17'
     end
 
-    it 'should accept a hash where a key equals its value' do
-      Bihash.new(:key => :key)[:key].must_equal :key
-    end
-
-    it "should maintain the returned value's id if key-value pairs are equal" do
-      key, value = [], []
-      bh = Bihash.new(key => value)
-      bh[key].object_id.must_equal value.object_id
-      bh[value].object_id.must_equal value.object_id
+    it 'should not accept both an object and a block' do
+      -> { Bihash.new('default 1') { 'default 2' } }.must_raise ArgumentError
     end
   end
 
