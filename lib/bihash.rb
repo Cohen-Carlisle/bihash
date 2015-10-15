@@ -7,12 +7,12 @@ class Bihash
   end
 
   def self.[](*args)
-    Bihash.new_from_hash(Hash[*args])
+    new_from_hash(Hash[*args])
   end
 
   def self.try_convert(arg)
     h = Hash.try_convert(arg)
-    h ? Bihash[h] : nil
+    h ? self[h] : nil
   end
 
   def [](key)
@@ -45,8 +45,8 @@ class Bihash
     end
   end
 
-  def ==(other)
-    other.is_a?(Bihash) && other.instance_variable_get(:@forward) == @forward
+  def ==(rhs)
+    rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
   end
 
   private
@@ -55,7 +55,7 @@ class Bihash
     if hash.values.uniq.length != hash.length
       raise ArgumentError, "Hash #{hash} contains duplicate values"
     end
-    bihash = Bihash.new
+    bihash = new
     bihash.instance_variable_set(:@reverse, hash.invert)
     bihash.instance_variable_set(:@forward, hash)
     bihash
