@@ -156,4 +156,11 @@ describe Bihash do
       (bh1 == bh2).must_equal false
     end
   end
+
+  describe '#empty?' do
+    it 'should indicate if the bihash is empty' do
+      Bihash.new.empty?.must_equal true
+      Bihash[:key => 'value'].empty?.must_equal false
+    end
+  end
 end

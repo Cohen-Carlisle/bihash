@@ -1,5 +1,8 @@
+require 'forwardable'
+
 class Bihash
   include Enumerable
+  extend Forwardable
 
   def initialize(*args, &block)
     @reverse = Hash.new(*args, &block)
@@ -48,6 +51,8 @@ class Bihash
   def ==(rhs)
     rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
   end
+
+  def_delegators :@forward, :empty?
 
   def self.new_from_hash(hash)
     if hash.values.uniq.length != hash.length
