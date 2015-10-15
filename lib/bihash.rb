@@ -49,8 +49,6 @@ class Bihash
     rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
   end
 
-  private
-
   def self.new_from_hash(hash)
     if hash.values.uniq.length != hash.length
       raise ArgumentError, "Hash #{hash} contains duplicate values"
@@ -60,4 +58,6 @@ class Bihash
     bihash.instance_variable_set(:@forward, hash)
     bihash
   end
+  private_class_method :new_from_hash
+
 end
