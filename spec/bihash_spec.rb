@@ -7,11 +7,15 @@ describe Bihash do
   describe '::new' do
     it 'should create an empty bihash with a default of nil if no args' do
       bh = Bihash.new
+      bh.must_be_instance_of Bihash
+      bh.must_be_empty
       bh[:not_a_key].must_equal nil
     end
 
     it 'should create an empty bihash with a default if given an object arg' do
       bh = Bihash.new('default')
+      bh.must_be_instance_of Bihash
+      bh.must_be_empty
       bh[:not_a_key].must_equal 'default'
       bh[:not_a_key].tr!('ealt', '3417')
       bh[:still_not_a_key].must_equal 'd3f4u17'
@@ -19,9 +23,11 @@ describe Bihash do
 
     it 'should create an empty bihash with a default if given a block arg' do
       bh = Bihash.new { 'd3f4u17' }
+      bh.must_be_instance_of Bihash
+      bh.must_be_empty
       bh[:not_a_key].must_equal 'd3f4u17'
       bh[:not_a_key].tr!('3417', 'ealt')
-      bh[:still_not_a_key].must_equal 'd3f4u17'
+      bh[:not_a_key].must_equal 'd3f4u17'
     end
 
     it 'should not accept both an object and a block' do
@@ -32,12 +38,13 @@ describe Bihash do
   describe '::[]' do
     it 'should be able to create an empty bihash' do
       bh = Bihash[]
-      assert_empty bh.instance_variable_get(:@forward)
-      assert_empty bh.instance_variable_get(:@reverse)
+      bh.must_be_instance_of Bihash
+      bh.must_be_empty
     end
 
     it 'should convert a hash to a bihash' do
       bh = Bihash[:key => 'value']
+      bh.must_be_instance_of Bihash
       bh[:key].must_equal 'value'
       bh['value'].must_equal :key
     end
@@ -47,37 +54,66 @@ describe Bihash do
     end
 
     it 'should accept a hash where a key equals its value' do
-      Bihash[:key => :key][:key].must_equal :key
+      bh = Bihash[:key => :key]
+      bh.must_be_instance_of Bihash
+      bh[:key].must_equal :key
     end
 
-    it "should maintain the returned value's id if key-value pairs are equal" do
+    it "should always return the value object if key-value pairs are equal" do
       key, value = [], []
       bh = Bihash[key => value]
+      bh.must_be_instance_of Bihash
       bh[key].object_id.must_equal value.object_id
       bh[value].object_id.must_equal value.object_id
     end
 
     it "should accept an even number of arguments" do
-      Bihash[:k1, 1, :k2, 2].must_equal Bihash[:k1 => 1, :k2 => 2]
+      bh = Bihash[:k1, 1, :k2, 2]
+      bh.must_be_instance_of Bihash
+      bh[:k1].must_equal 1
+      bh[:k2].must_equal 2
+      bh[1].must_equal :k1
+      bh[2].must_equal :k2
     end
 
-    it "should accept an array key-value pairs packaged in arrays" do
-      array1 = [[:k1, 1], [:k2, 2]]
-      Bihash[array1].must_equal Bihash[:k1 => 1, :k2 => 2]
+    it "should accept an array of key-value pairs packaged in arrays" do
+      array = [[:k1, 1], [:k2, 2]]
+      bh = Bihash[array]
+      bh.must_be_instance_of Bihash
+      bh[:k1].must_equal 1
+      bh[:k2].must_equal 2
+      bh[1].must_equal :k1
+      bh[2].must_equal :k2
     end
   end
 
   describe '::try_convert' do
-    it 'should convert an object to a Bihash if it responds to #to_hash' do
-      Bihash.try_convert(:k1 => 1, :k2 => 2).must_equal Bihash[:k1, 1, :k2, 2]
+    it 'should convert an object to a bihash if it responds to #to_hash' do
+      hash = {:k1 => 1, :k2 => 2}
+      bh = Bihash.try_convert(hash)
+      bh.must_be_instance_of Bihash
+      bh[:k1].must_equal 1
+      bh[:k2].must_equal 2
+      bh[1].must_equal :k1
+      bh[2].must_equal :k2
     end
 
     it 'should return nil if the object does not repond to #to_hash' do
       Bihash.try_convert(Object.new).must_equal nil
     end
+
+    it 'should not accept a hash with duplicate values' do
+      -> { Bihash.try_convert(:k1 => 1, :k2 => 1) }.must_raise ArgumentError
+    end
   end
 
   describe '#[]' do
+    it 'should return the other pair' do
+      bh = Bihash[:key => 'value']
+      bh[:key].must_equal 'value'
+      bh['value'].must_equal :key
+    end
+
     it 'should return falsey values correctly' do
       bh1 = Bihash[nil => false]
       bh1[nil].must_equal false
@@ -102,10 +138,10 @@ describe Bihash do
       bh[1] = 'uno'
       bh[1].must_equal 'uno'
       bh['uno'].must_equal 1
-      bh['one'].must_equal nil
+      bh['one'].must_be_nil
     end
 
-    it "should maintain the returned value's id if key-value pairs are equal" do
+    it "should always return the value object if key-value pairs are equal" do
       key, value = [], []
       bh = Bihash.new
       bh[key] = value
@@ -118,12 +154,13 @@ describe Bihash do
     it 'should remove both keys' do
       bh1 = Bihash[:key => 'value']
       bh1.delete(:key)
-      bh1[:key].must_equal nil
-      bh1['value'].must_equal nil
+      bh1[:key].must_be_nil
+      bh1['value'].must_be_nil
+
       bh2 = Bihash[:key => 'value']
       bh2.delete('value')
-      bh1[:key].must_equal nil
-      bh1['value'].must_equal nil
+      bh1[:key].must_be_nil
+      bh1['value'].must_be_nil
     end
   end
 
@@ -142,12 +179,15 @@ describe Bihash do
 
     it 'should return an enumerator if not given a block' do
       Bihash.new.each.must_be_instance_of Enumerator
+      array = []
+      Bihash[:k1 => 'v1', :k2 => 'v2'].each { |pair| array << pair }
+      array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
     end
   end
 
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
-      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 2]
+      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k2 => 2, :k1 => 1]
       (bh1 == bh2).must_equal true
     end
 
