@@ -203,4 +203,17 @@ describe Bihash do
       Bihash[:key => 'value'].empty?.must_equal false
     end
   end
+
+  describe '#key?' do
+    it 'should indicate if the bihash contains the argument' do
+      bh = Bihash[:key => 'value']
+      bh.key?(:key).must_equal true
+      bh.key?('value').must_equal true
+      bh.key?(:not_a_key).must_equal false
+    end
+
+    it 'should be aliased to #has_key?' do
+      Bihash.new.method(:has_key?).original_name.must_equal :key?
+    end
+  end
 end

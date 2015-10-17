@@ -52,6 +52,11 @@ class Bihash
     rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
   end
 
+  def key?(arg)
+    @forward.key?(arg) || @reverse.key?(arg)
+  end
+  alias :has_key? :key?
+
   def_delegators :@forward, :empty?
 
   def self.new_from_hash(hash)
