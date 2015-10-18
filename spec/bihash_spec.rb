@@ -238,4 +238,12 @@ describe Bihash do
       -> { Bihash.new.fetch(:not_a_key) }.must_raise KeyError
     end
   end
+
+  describe '#clear' do
+    it 'should remove all pairs and return the bihash' do
+      bh = Bihash[:key => 'value']
+      bh.clear.object_id.must_equal bh.object_id
+      bh.must_be_empty
+    end
+  end
 end
