@@ -216,4 +216,26 @@ describe Bihash do
       Bihash.new.method(:has_key?).original_name.must_equal :key?
     end
   end
+
+  describe '#fetch' do
+    it 'should return the other pair' do
+      bh = Bihash[:key => 'value']
+      bh.fetch(:key).must_equal 'value'
+      bh.fetch('value').must_equal :key
+    end
+
+    it 'should return falsey values correctly' do
+      bh1 = Bihash[nil => false]
+      bh1.fetch(nil).must_equal false
+      bh1.fetch(false).must_equal nil
+
+      bh2 = Bihash[false => nil]
+      bh2.fetch(false).must_equal nil
+      bh2.fetch(nil).must_equal false
+    end
+
+    it 'should raise KeyError if key does not exist' do
+      -> { Bihash.new.fetch(:not_a_key) }.must_raise KeyError
+    end
+  end
 end

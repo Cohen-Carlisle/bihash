@@ -57,6 +57,10 @@ class Bihash
   end
   alias :has_key? :key?
 
+  def fetch(key)
+    @forward.key?(key) ? @forward.fetch(key) : @reverse.fetch(key)
+  end
+
   def_delegators :@forward, :empty?
 
   def self.new_from_hash(hash)
