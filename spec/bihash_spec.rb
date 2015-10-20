@@ -59,7 +59,7 @@ describe Bihash do
       bh[:key].must_equal :key
     end
 
-    it "should always return the value object if key-value pairs are equal" do
+    it 'should always return the value object if key-value pairs are equal' do
       key, value = [], []
       bh = Bihash[key => value]
       bh.must_be_instance_of Bihash
@@ -67,7 +67,7 @@ describe Bihash do
       bh[value].object_id.must_equal value.object_id
     end
 
-    it "should accept an even number of arguments" do
+    it 'should accept an even number of arguments' do
       bh = Bihash[:k1, 1, :k2, 2]
       bh.must_be_instance_of Bihash
       bh[:k1].must_equal 1
@@ -76,7 +76,7 @@ describe Bihash do
       bh[2].must_equal :k2
     end
 
-    it "should accept an array of key-value pairs packaged in arrays" do
+    it 'should accept an array of key-value pairs packaged in arrays' do
       array = [[:k1, 1], [:k2, 2]]
       bh = Bihash[array]
       bh.must_be_instance_of Bihash
@@ -141,7 +141,7 @@ describe Bihash do
       bh.key?('one').must_equal false
     end
 
-    it "should always return the value object if key-value pairs are equal" do
+    it 'should always return the value object if key-value pairs are equal' do
       key, value = [], []
       bh = Bihash.new
       bh[key] = value
