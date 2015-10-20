@@ -70,7 +70,7 @@ class Bihash
     self
   end
 
-  def_delegators :@forward, :empty?
+  def_delegators :@forward, :empty?, :length, :size
 
   def self.new_from_hash(hash)
     if hash.values.uniq.length != hash.length

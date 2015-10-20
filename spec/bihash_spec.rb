@@ -256,4 +256,16 @@ describe Bihash do
       bh.must_be_empty
     end
   end
+
+  describe '#length' do
+    it 'should return the number of pairs in the bihash' do
+      Bihash[1 => :one, 2 => :two].length.must_equal 2
+    end
+  end
+
+  describe '#size' do
+    it 'should return the number of pairs in the bihash' do
+      Bihash[1 => :one, 2 => :two].size.must_equal 2
+    end
+  end
 end
