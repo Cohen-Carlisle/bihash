@@ -28,6 +28,7 @@ class Bihash
     @reverse[key2] = key1
     @forward[key1] = key2
   end
+  alias :store :[]=
 
   def delete(key)
     if @forward.key?(key)

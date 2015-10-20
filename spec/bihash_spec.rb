@@ -148,6 +148,14 @@ describe Bihash do
       bh[key].object_id.must_equal value.object_id
       bh[value].object_id.must_equal value.object_id
     end
+
+    it 'should be aliased to #store' do
+      Bihash.new.method(:store).original_name.must_equal :[]=
+      bh = Bihash.new
+      bh.store(:key, 'value')
+      bh[:key].must_equal 'value'
+      bh['value'].must_equal :key
+    end
   end
 
   describe '#delete' do
