@@ -212,8 +212,10 @@ describe Bihash do
       bh.key?(:not_a_key).must_equal false
     end
 
-    it 'should be aliased to #has_key?' do
+    it 'should be aliased to #has_key?, #include?, and #member?' do
       Bihash.new.method(:has_key?).original_name.must_equal :key?
+      Bihash.new.method(:include?).original_name.must_equal :key?
+      Bihash.new.method(:member?).original_name.must_equal :key?
     end
   end
 

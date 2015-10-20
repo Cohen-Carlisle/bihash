@@ -56,6 +56,8 @@ class Bihash
     @forward.key?(arg) || @reverse.key?(arg)
   end
   alias :has_key? :key?
+  alias :include? :key?
+  alias :member? :key?
 
   def fetch(key)
     @forward.key?(key) ? @forward.fetch(key) : @reverse.fetch(key)
