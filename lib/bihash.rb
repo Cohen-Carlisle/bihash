@@ -70,6 +70,12 @@ class Bihash
     self
   end
 
+  def rehash
+    @forward.rehash
+    @reverse.rehash
+    self
+  end
+
   def_delegators :@forward, :empty?, :length, :size
 
   def self.new_from_hash(hash)

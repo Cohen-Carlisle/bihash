@@ -272,4 +272,14 @@ describe Bihash do
       Bihash[1 => :one, 2 => :two].size.must_equal 2
     end
   end
+
+  describe '#rehash' do
+    it 'should recompute all key hash values and return the bihash' do
+      bh = Bihash[[] => :array]
+      bh[:array] << 1
+      bh[[1]].must_equal nil
+      bh.rehash[[1]].must_equal :array
+      bh[[1]].must_equal :array
+    end
+  end
 end
