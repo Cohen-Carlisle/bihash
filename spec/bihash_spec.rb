@@ -154,8 +154,8 @@ describe Bihash do
     end
 
     it 'should be aliased to #store' do
-      Bihash.new.method(:store).original_name.must_equal :[]=
       bh = Bihash.new
+      bh.method(:store).must_equal bh.method(:[]=)
       bh.store(:key, 'value')
       bh[:key].must_equal 'value'
       bh['value'].must_equal :key
@@ -197,7 +197,8 @@ describe Bihash do
     end
 
     it 'should be aliased to #each_pair' do
-      Bihash.new.method(:each_pair).original_name.must_equal :each
+      bh = Bihash.new
+      bh.method(:each_pair).must_equal bh.method(:each)
     end
   end
 
@@ -229,9 +230,10 @@ describe Bihash do
     end
 
     it 'should be aliased to #has_key?, #include?, and #member?' do
-      Bihash.new.method(:has_key?).original_name.must_equal :key?
-      Bihash.new.method(:include?).original_name.must_equal :key?
-      Bihash.new.method(:member?).original_name.must_equal :key?
+      bh = Bihash.new
+      bh.method(:has_key?).must_equal bh.method(:key?)
+      bh.method(:include?).must_equal bh.method(:key?)
+      bh.method(:member?).must_equal bh.method(:key?)
     end
   end
 
