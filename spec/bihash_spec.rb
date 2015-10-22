@@ -195,6 +195,10 @@ describe Bihash do
       Bihash[:k1 => 'v1', :k2 => 'v2'].each { |pair| array << pair }
       array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
     end
+
+    it 'should be aliased to #each_pair' do
+      Bihash.new.method(:each_pair).original_name.must_equal :each
+    end
   end
 
   describe '#==' do

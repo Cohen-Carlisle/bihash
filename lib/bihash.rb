@@ -48,6 +48,7 @@ class Bihash
       @forward.each
     end
   end
+  alias :each_pair :each
 
   def ==(rhs)
     rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
