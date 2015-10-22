@@ -76,6 +76,10 @@ class Bihash
     self
   end
 
+  def to_hash
+    @forward.dup
+  end
+
   def_delegators :@forward, :empty?, :length, :size
 
   def self.new_from_hash(hash)

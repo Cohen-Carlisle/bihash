@@ -282,4 +282,14 @@ describe Bihash do
       bh[[1]].must_equal :array
     end
   end
+
+  describe '#to_hash' do
+    it 'should return a copy of the forward hash' do
+      bh = Bihash[:key1 => 'val1', :key2 => 'val2']
+      h = bh.to_hash
+      h.must_equal Hash[:key1 => 'val1', :key2 => 'val2']
+      h.delete(:key1)
+      bh.must_include :key1
+    end
+  end
 end
