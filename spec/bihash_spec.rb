@@ -4,6 +4,10 @@ require 'minitest/autorun'
 require 'bihash'
 
 describe Bihash do
+  it 'should be enumerable' do
+    Bihash.must_include Enumerable
+  end
+
   describe '::new' do
     it 'should create an empty bihash with a default of nil if no args' do
       bh = Bihash.new
