@@ -142,7 +142,7 @@ describe Bihash do
       bh[1] = 'uno'
       bh[1].must_equal 'uno'
       bh['uno'].must_equal 1
-      bh.key?('one').must_equal false
+      bh.wont_include 'one'
     end
 
     it 'should always return the value object if key-value pairs are equal' do
@@ -166,13 +166,13 @@ describe Bihash do
     it 'should remove both keys' do
       bh1 = Bihash[:key => 'value']
       bh1.delete(:key)
-      bh1.key?(:key).must_equal false
-      bh1.key?('value').must_equal false
+      bh1.wont_include :key
+      bh1.wont_include 'value'
 
       bh2 = Bihash[:key => 'value']
       bh2.delete('value')
-      bh2.key?(:key).must_equal false
-      bh2.key?('value').must_equal false
+      bh2.wont_include :key
+      bh2.wont_include 'value'
     end
   end
 
