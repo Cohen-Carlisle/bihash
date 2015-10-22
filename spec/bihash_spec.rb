@@ -296,4 +296,28 @@ describe Bihash do
       bh.must_include :key1
     end
   end
+
+  describe '#values_at' do
+    it 'should return an array of values corresponding to the given keys' do
+      Bihash[1 => :one, 2 => :two].values_at(1, 2).must_equal [:one, :two]
+      Bihash[1 => :one, 2 => :two].values_at(:one, :two).must_equal [1, 2]
+      Bihash[1 => :one, 2 => :two].values_at(1, :two).must_equal [:one, 2]
+    end
+
+    it 'should use the default if a given key is not found' do
+      bh = Bihash.new(404)
+      bh[1] = :one
+      bh[2] = :two
+      bh.values_at(1, 2, 3).must_equal [:one, :two, 404]
+      bh.values_at(:one, :two, :three).must_equal [1, 2, 404]
+    end
+
+    it 'should not duplicate entries if a key equals its value' do
+      Bihash[:key => :key].values_at(:key).must_equal [:key]
+    end
+
+    it 'should return an empty array with no args' do
+      Bihash[:key => 'value'].values_at.must_equal []
+    end
+  end
 end

@@ -81,6 +81,10 @@ class Bihash
     @forward.dup
   end
 
+  def values_at(*keys)
+    keys.map { |key| self[key] }
+  end
+
   def_delegators :@forward, :empty?, :length, :size
 
   def self.new_from_hash(hash)
