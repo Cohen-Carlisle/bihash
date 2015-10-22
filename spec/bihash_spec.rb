@@ -57,6 +57,10 @@ describe Bihash do
       -> { Bihash[:k1 => 'val', :k2 => 'val'] }.must_raise ArgumentError
     end
 
+    it 'should not accept a hash that would result in ambigous mappings' do
+      -> { Bihash[1, 2, 2, 3] }.must_raise ArgumentError
+    end
+
     it 'should accept a hash where a key equals its value' do
       bh = Bihash[:key => :key]
       bh.must_be_instance_of Bihash

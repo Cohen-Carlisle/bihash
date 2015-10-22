@@ -87,13 +87,13 @@ class Bihash
 
   def_delegators :@forward, :empty?, :length, :size
 
-  def self.new_from_hash(hash)
-    if hash.values.uniq.length != hash.length
-      raise ArgumentError, "Hash #{hash} contains duplicate values"
+  def self.new_from_hash(h)
+    if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2
+      raise ArgumentError, "Hash #{h} contains duplicate values"
     end
     bihash = new
-    bihash.instance_variable_set(:@reverse, hash.invert)
-    bihash.instance_variable_set(:@forward, hash)
+    bihash.instance_variable_set(:@reverse, h.invert)
+    bihash.instance_variable_set(:@forward, h)
     bihash
   end
   private_class_method :new_from_hash
