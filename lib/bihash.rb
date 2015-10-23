@@ -89,7 +89,7 @@ class Bihash
 
   def self.new_from_hash(h)
     if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2
-      raise ArgumentError, "Hash #{h} contains duplicate values"
+      raise ArgumentError, 'A key would be duplicated outside its own pair'
     end
     bihash = new
     bihash.instance_variable_set(:@reverse, h.invert)
