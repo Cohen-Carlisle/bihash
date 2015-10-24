@@ -85,7 +85,7 @@ class Bihash
     keys.map { |key| self[key] }
   end
 
-  def_delegators :@forward, :empty?, :length, :size
+  def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
     if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2

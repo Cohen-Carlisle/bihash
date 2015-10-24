@@ -326,4 +326,18 @@ describe Bihash do
       Bihash[:key => 'value'].values_at.must_equal []
     end
   end
+
+  describe '#flatten' do
+    it 'extract the pairs into an array' do
+      Bihash[:k1 => 'v1', :k2 => 'v2'].flatten.must_equal [:k1, 'v1', :k2, 'v2']
+    end
+
+    it 'should not flatten array keys if no argument is given' do
+      Bihash[:key => ['v1', 'v2']].flatten.must_equal [:key, ['v1', 'v2']]
+    end
+
+    it 'should flatten to the level given as an argument' do
+      Bihash[:key => ['v1', 'v2']].flatten(2).must_equal [:key, 'v1', 'v2']
+    end
+  end
 end
