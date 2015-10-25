@@ -340,4 +340,18 @@ describe Bihash do
       Bihash[:key => ['v1', 'v2']].flatten(2).must_equal [:key, 'v1', 'v2']
     end
   end
+
+  describe '#shift' do
+    it 'should remove the oldest pair from the bihash and return it' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three]
+      bh.shift.must_equal [1, :one]
+      bh.must_equal Bihash[2 => :two, 3 => :three]
+    end
+
+    it 'should return the default value if bihash is empty' do
+      Bihash.new.shift.must_equal nil
+      Bihash.new(404).shift.must_equal 404
+      Bihash.new { 'd3f4u17' }.shift.must_equal 'd3f4u17'
+    end
+  end
 end

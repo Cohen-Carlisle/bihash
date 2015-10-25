@@ -85,6 +85,15 @@ class Bihash
     keys.map { |key| self[key] }
   end
 
+  def shift
+    if empty?
+      @reverse.shift
+    else
+      @reverse.shift
+      @forward.shift
+    end
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
