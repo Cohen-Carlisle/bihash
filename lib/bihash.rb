@@ -94,6 +94,10 @@ class Bihash
     end
   end
 
+  def assoc(key)
+    @forward.assoc(key) || @reverse.assoc(key)
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)

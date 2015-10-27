@@ -354,4 +354,24 @@ describe Bihash do
       Bihash.new { 'd3f4u17' }.shift.must_equal 'd3f4u17'
     end
   end
+
+  describe '#assoc' do
+    it 'should return the pair if the argument is a key' do
+      bh = Bihash[:k1 => 'v1', :k2 => 'v2']
+      bh.assoc(:k1).must_equal [:k1, 'v1']
+      bh.assoc('v2').must_equal ['v2', :k2]
+    end
+
+    it 'should return nil if the argument is not a key' do
+      bh = Bihash.new(404)
+      bh.assoc(:not_a_key).must_equal nil
+    end
+
+    it 'should find the key using #==' do
+      bh = Bihash[[] => 'array']
+      bh['array'] << 'modified'
+      bh.assoc(['modified']).must_equal [['modified'], 'array']
+      bh.assoc([]).must_equal nil
+    end
+  end
 end
