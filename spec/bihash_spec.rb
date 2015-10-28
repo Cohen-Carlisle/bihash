@@ -293,13 +293,18 @@ describe Bihash do
     end
   end
 
-  describe '#to_hash' do
+  describe '#to_h' do
     it 'should return a copy of the forward hash' do
       bh = Bihash[:key1 => 'val1', :key2 => 'val2']
-      h = bh.to_hash
+      h = bh.to_h
       h.must_equal Hash[:key1 => 'val1', :key2 => 'val2']
       h.delete(:key1)
       bh.must_include :key1
+    end
+
+    it 'should be aliased to #to_hash' do
+      bh = Bihash.new
+      bh.method(:to_hash).must_equal bh.method(:to_h)
     end
   end
 

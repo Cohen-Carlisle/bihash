@@ -77,9 +77,10 @@ class Bihash
     self
   end
 
-  def to_hash
+  def to_h
     @forward.dup
   end
+  alias :to_hash :to_h
 
   def values_at(*keys)
     keys.map { |key| self[key] }
