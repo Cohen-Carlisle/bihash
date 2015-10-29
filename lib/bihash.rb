@@ -53,6 +53,7 @@ class Bihash
   def ==(rhs)
     rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
   end
+  alias :eql? :==
 
   def key?(arg)
     @forward.key?(arg) || @reverse.key?(arg)

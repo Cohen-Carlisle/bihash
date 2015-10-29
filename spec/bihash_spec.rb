@@ -216,6 +216,11 @@ describe Bihash do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 99]
       (bh1 == bh2).must_equal false
     end
+
+    it 'should be aliased to #eql?' do
+      bh = Bihash.new
+      bh.method(:eql?).must_equal bh.method(:==)
+    end
   end
 
   describe '#empty?' do
