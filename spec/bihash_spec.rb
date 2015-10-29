@@ -396,4 +396,14 @@ describe Bihash do
       bh.method(:inspect).must_equal bh.method(:to_s)
     end
   end
+
+  describe '#hash' do
+    it 'should provide a hash code' do
+      b__h = Bihash[:k1 => 'v1', :k2 => 'v2']
+      same = Bihash[:k2 => 'v2', :k1 => 'v1']
+      diff = Bihash[:k1 => 'v2', :k2 => 'v1']
+      b__h.hash.must_equal same.hash
+      b__h.hash.wont_equal diff.hash
+    end
+  end
 end

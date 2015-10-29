@@ -105,6 +105,10 @@ class Bihash
   end
   alias :inspect :to_s
 
+  def hash
+    self.class.hash ^ @forward.hash
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
