@@ -5,6 +5,7 @@ class Bihash
   extend Forwardable
 
   def initialize(*args, &block)
+    super()
     @reverse = Hash.new(*args, &block)
     @forward = Hash.new
   end
