@@ -406,4 +406,22 @@ describe Bihash do
       b__h.hash.wont_equal diff.hash
     end
   end
+
+  describe '#dup' do
+    it 'should make a copy of the bihash' do
+      bh = Bihash[1 => :one]
+      dup = bh.dup
+      dup[2] = :two
+      bh[2].must_equal nil
+    end
+  end
+
+  describe '#clone' do
+    it 'should make a copy of the bihash' do
+      bh = Bihash[1 => :one]
+      clone = bh.clone
+      clone[2] = :two
+      bh[2].must_equal nil
+    end
+  end
 end

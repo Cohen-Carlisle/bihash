@@ -109,6 +109,11 @@ class Bihash
     self.class.hash ^ @forward.hash
   end
 
+  def initialize_copy(source)
+    super
+    @forward, @reverse = @forward.dup, @reverse.dup
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
