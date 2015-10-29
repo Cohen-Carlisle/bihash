@@ -379,4 +379,16 @@ describe Bihash do
       bh.assoc([]).must_equal nil
     end
   end
+
+  describe '#to_s' do
+    it 'should return a nice string representing the bihash' do
+      bh = Bihash[:k1 => 'v1', :k2 => [:v2], :k3 => {:k4 => 'v4'}]
+      bh.to_s.must_equal 'Bihash[:k1=>"v1", :k2=>[:v2], :k3=>{:k4=>"v4"}]'
+    end
+
+    it 'should be aliased to #inspect' do
+      bh = Bihash.new
+      bh.method(:inspect).must_equal bh.method(:to_s)
+    end
+  end
 end

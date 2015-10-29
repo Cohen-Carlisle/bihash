@@ -99,6 +99,11 @@ class Bihash
     @forward.assoc(key) || @reverse.assoc(key)
   end
 
+  def to_s
+    "Bihash[#{@forward.to_s[1..-2]}]"
+  end
+  alias :inspect :to_s
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
