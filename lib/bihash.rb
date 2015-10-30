@@ -116,6 +116,14 @@ class Bihash
     self.class.hash ^ @forward.hash
   end
 
+  def select(&block)
+    if block_given?
+      self.class[@forward.select(&block)]
+    else
+      @forward.select
+    end
+  end
+
   def initialize_copy(source)
     super
     @forward, @reverse = @forward.dup, @reverse.dup
