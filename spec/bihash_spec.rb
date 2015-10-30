@@ -39,6 +39,12 @@ describe Bihash do
     end
   end
 
+  describe '#initialize' do
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.send(:initialize) }.must_raise RuntimeError
+    end
+  end
+
   describe '::[]' do
     it 'should be able to create an empty bihash' do
       bh = Bihash[]
@@ -164,6 +170,10 @@ describe Bihash do
       bh[:key].must_equal 'value'
       bh['value'].must_equal :key
     end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze[:key] = 'value' }.must_raise RuntimeError
+    end
   end
 
   describe '#delete' do
@@ -177,6 +187,10 @@ describe Bihash do
       bh2.delete('value')
       bh2.wont_include :key
       bh2.wont_include 'value'
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.delete(:key) }.must_raise RuntimeError
     end
   end
 
@@ -274,6 +288,10 @@ describe Bihash do
       bh.clear.object_id.must_equal bh.object_id
       bh.must_be_empty
     end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.clear }.must_raise RuntimeError
+    end
   end
 
   describe '#length' do
@@ -295,6 +313,10 @@ describe Bihash do
       bh[[1]].must_equal nil
       bh.rehash[[1]].must_equal :array
       bh[[1]].must_equal :array
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.rehash }.must_raise RuntimeError
     end
   end
 
@@ -362,6 +384,10 @@ describe Bihash do
       Bihash.new.shift.must_equal nil
       Bihash.new(404).shift.must_equal 404
       Bihash.new { 'd3f4u17' }.shift.must_equal 'd3f4u17'
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.shift }.must_raise RuntimeError
     end
   end
 

@@ -5,6 +5,7 @@ class Bihash
   extend Forwardable
 
   def initialize(*args, &block)
+    raise_error_if_frozen
     super()
     @reverse = Hash.new(*args, &block)
     @forward = Hash.new
@@ -24,6 +25,7 @@ class Bihash
   end
 
   def []=(key1, key2)
+    raise_error_if_frozen
     delete(key1)
     delete(key2)
     @reverse[key2] = key1
@@ -32,6 +34,7 @@ class Bihash
   alias :store :[]=
 
   def delete(key)
+    raise_error_if_frozen
     if @forward.key?(key)
       @reverse.delete(@forward[key])
       @forward.delete(key)
@@ -68,12 +71,14 @@ class Bihash
   end
 
   def clear
+    raise_error_if_frozen
     @forward.clear
     @reverse.clear
     self
   end
 
   def rehash
+    raise_error_if_frozen
     @forward.rehash
     @reverse.rehash
     self
@@ -89,6 +94,7 @@ class Bihash
   end
 
   def shift
+    raise_error_if_frozen
     if empty?
       @reverse.shift
     else
@@ -128,4 +134,9 @@ class Bihash
   end
   private_class_method :new_from_hash
 
+  private
+
+  def raise_error_if_frozen
+    raise "can't modify frozen Bihash" if frozen?
+  end
 end
