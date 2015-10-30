@@ -132,11 +132,6 @@ class Bihash
     end
   end
 
-  def initialize_copy(source)
-    super
-    @forward, @reverse = @forward.dup, @reverse.dup
-  end
-
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
@@ -151,6 +146,11 @@ class Bihash
   private_class_method :new_from_hash
 
   private
+
+  def initialize_copy(source)
+    super
+    @forward, @reverse = @forward.dup, @reverse.dup
+  end
 
   def raise_error_if_frozen
     raise "can't modify frozen Bihash" if frozen?
