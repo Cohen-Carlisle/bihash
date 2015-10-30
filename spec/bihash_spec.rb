@@ -462,4 +462,16 @@ describe Bihash do
       Bihash[1 => :one, 2 => :two].select.must_be_instance_of Enumerator
     end
   end
+
+  describe '#reject' do
+    it 'should return a bihash with the items not rejected by the block' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh.reject { |k1,k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
+      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    end
+
+    it 'should return an enumerator if not given a block' do
+      Bihash[1 => :one, 2 => :two].reject.must_be_instance_of Enumerator
+    end
+  end
 end

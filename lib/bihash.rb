@@ -124,6 +124,14 @@ class Bihash
     end
   end
 
+  def reject(&block)
+    if block_given?
+      self.class[@forward.reject(&block)]
+    else
+      @forward.reject
+    end
+  end
+
   def initialize_copy(source)
     super
     @forward, @reverse = @forward.dup, @reverse.dup
