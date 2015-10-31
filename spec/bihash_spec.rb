@@ -177,6 +177,11 @@ describe Bihash do
   end
 
   describe '#delete' do
+    it 'should return the other key if the given key is found' do
+      Bihash[:key => 'value'].delete(:key).must_equal 'value'
+      Bihash[:key => 'value'].delete('value').must_equal :key
+    end
+
     it 'should remove both keys' do
       bh1 = Bihash[:key => 'value']
       bh1.delete(:key)
@@ -187,6 +192,11 @@ describe Bihash do
       bh2.delete('value')
       bh2.wont_include :key
       bh2.wont_include 'value'
+    end
+
+    it 'should call the block (if given) when the key is not found' do
+      out = Bihash[:key => 'value'].delete(404) { |key| "#{key} not found" }
+      out.must_equal '404 not found'
     end
 
     it 'should raise RuntimeError if called on a frozen bihash' do
