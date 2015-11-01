@@ -530,4 +530,13 @@ describe Bihash do
       end
     end
   end
+
+  describe '#default=' do
+    it 'should set the default object' do
+      bh = Bihash.new { 'proc called' }
+      bh[:not_a_key].must_equal 'proc called'
+      (bh.default = 404).must_equal 404
+      bh[:not_a_key].must_equal 404
+    end
+  end
 end
