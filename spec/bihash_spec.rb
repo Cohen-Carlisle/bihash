@@ -492,4 +492,42 @@ describe Bihash do
       Bihash[1 => :one, 2 => :two].reject.must_be_instance_of Enumerator
     end
   end
+
+  describe '#default' do
+    it 'should not accept more than one argument' do
+      -> { Bihash.new.default(1,2) }.must_raise ArgumentError
+    end
+
+    describe 'when there is not a default proc' do
+      it 'should return the default' do
+        bh1 = Bihash[:key => 'value']
+        bh1.default.must_equal nil
+        bh1.default(:not_a_key).must_equal nil
+        bh1.default(:key).must_equal nil
+
+        bh2 = Bihash.new(404)
+        bh2[:key] = 'value'
+        bh2.default.must_equal 404
+        bh2.default(:not_a_key).must_equal 404
+        bh2.default(:key).must_equal 404
+      end
+    end
+
+    describe 'when there is a default proc' do
+      it 'should return the default if called with no argument' do
+        Bihash.new { 'proc called' }.default.must_equal nil
+      end
+
+      it 'should call the default proc when called with an argument' do
+        bh = Bihash.new { |bihash, key| bihash[key] = key.to_s }
+        bh[:key] = 'value'
+
+        bh.default(:key).must_equal 'key'
+        bh[:key].must_equal 'key'
+
+        bh.default(404).must_equal '404'
+        bh[404].must_equal '404'
+      end
+    end
+  end
 end

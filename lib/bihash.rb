@@ -143,6 +143,17 @@ class Bihash
     end
   end
 
+  def default(*args)
+    case args.count
+    when 0
+      @default
+    when 1
+      get_default(args[0])
+    else
+      raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
+    end
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
