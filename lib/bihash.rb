@@ -159,6 +159,10 @@ class Bihash
     @default = default
   end
 
+  def default_proc
+    @default_proc
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)

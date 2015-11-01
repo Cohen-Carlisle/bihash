@@ -539,4 +539,19 @@ describe Bihash do
       bh[:not_a_key].must_equal 404
     end
   end
+
+  describe '#default_proc' do
+    it 'should return the default proc if it exists' do
+      bh = Bihash.new { |bihash, key| bihash[key] = key }
+      prc = bh.default_proc
+      array = []
+      prc.call(array, 2)
+      array.must_equal [nil, nil, 2]
+    end
+
+    it 'should return nil if there is no default proc' do
+      Bihash.new.default_proc.must_equal nil
+      Bihash.new(404).default_proc.must_equal nil
+    end
+  end
 end
