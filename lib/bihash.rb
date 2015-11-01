@@ -155,6 +155,7 @@ class Bihash
   end
 
   def default=(default)
+    raise_error_if_frozen
     @default_proc = nil
     @default = default
   end
