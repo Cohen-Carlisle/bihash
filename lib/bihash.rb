@@ -29,7 +29,7 @@ class Bihash
     if key?(key)
       @forward.key?(key) ? @forward[key] : @reverse[key]
     else
-      get_default(key)
+      default_value(key)
     end
   end
 
@@ -107,7 +107,7 @@ class Bihash
   def shift
     raise_error_if_frozen
     if empty?
-      get_default(nil)
+      default_value(nil)
     else
       @reverse.shift
       @forward.shift
@@ -148,7 +148,7 @@ class Bihash
     when 0
       @default
     when 1
-      get_default(args[0])
+      default_value(args[0])
     else
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
     end
@@ -178,7 +178,7 @@ class Bihash
     raise "can't modify frozen Bihash" if frozen?
   end
 
-  def get_default(key)
+  def default_value(key)
     @default_proc ? @default_proc.call(self, key) : @default
   end
 end
