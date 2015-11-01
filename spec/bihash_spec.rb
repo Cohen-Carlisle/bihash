@@ -558,4 +558,32 @@ describe Bihash do
       Bihash.new(404).default_proc.must_equal nil
     end
   end
+
+  describe '#default_proc=' do
+    it 'should set the default proc' do
+      bh = Bihash.new(:default_object)
+      bh[:not_a_key].must_equal :default_object
+      (bh.default_proc = ->(bihash, key) { '404' }).must_be_instance_of Proc
+      bh[:not_a_key].must_equal '404'
+    end
+
+    it 'should set the default value to nil if argument is nil' do
+      bh = Bihash.new(:default_object)
+      bh[:not_a_key].must_equal :default_object
+      (bh.default_proc = nil).must_equal nil
+      bh[:not_a_key].must_equal nil
+    end
+
+    it 'should raise TypeError if not given a non-proc (except nil)' do
+      -> { Bihash.new.default_proc = :not_a_proc }.must_raise TypeError
+    end
+
+    it 'should raise TypeError given a lambda without 2 args' do
+      -> { Bihash.new.default_proc = -> { '404' } }.must_raise TypeError
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash[].freeze.default_proc = proc { '' } }.must_raise RuntimeError
+    end
+  end
 end

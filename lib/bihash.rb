@@ -163,6 +163,20 @@ class Bihash
     @default_proc
   end
 
+  def default_proc=(arg)
+    raise_error_if_frozen
+    if !arg.nil?
+      if !arg.is_a?(Proc)
+        raise TypeError, "wrong default_proc type #{arg.class} (expected Proc)"
+      end
+      if arg.lambda? && arg.arity != 2
+        raise TypeError, "default_proc takes two arguments (2 for #{arg.arity})"
+      end
+    end
+    @default = nil
+    @default_proc = arg
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
