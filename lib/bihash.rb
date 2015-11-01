@@ -6,9 +6,14 @@ class Bihash
 
   def initialize(*args, &block)
     raise_error_if_frozen
+    if block_given? && !args.empty?
+      raise ArgumentError, "wrong number of arguments (#{args.size} for 0)"
+    elsif args.size > 1
+      raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
+    end
     super()
-    @reverse = Hash.new(*args, &block)
-    @forward = Hash.new
+    @forward, @reverse = Hash.new, Hash.new
+    @default, @default_proc = args[0], block
   end
 
   def self.[](*args)
@@ -21,7 +26,11 @@ class Bihash
   end
 
   def [](key)
-    @forward.key?(key) ? @forward[key] : @reverse[key]
+    if key?(key)
+      @forward.key?(key) ? @forward[key] : @reverse[key]
+    else
+      get_default(key)
+    end
   end
 
   def []=(key1, key2)
@@ -98,7 +107,7 @@ class Bihash
   def shift
     raise_error_if_frozen
     if empty?
-      @reverse.shift
+      get_default(nil)
     else
       @reverse.shift
       @forward.shift
@@ -156,5 +165,9 @@ class Bihash
 
   def raise_error_if_frozen
     raise "can't modify frozen Bihash" if frozen?
+  end
+
+  def get_default(key)
+    @default_proc ? @default_proc.call(self, key) : @default
   end
 end

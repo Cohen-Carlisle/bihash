@@ -34,6 +34,14 @@ describe Bihash do
       bh[:not_a_key].must_equal 'd3f4u17'
     end
 
+    it 'should allow assignment of new pairs if given a block arg' do
+      bh = Bihash.new { |bihash, key| bihash[key] = key.to_s }
+      bh[404].must_equal '404'
+      bh.size.must_equal 1
+      bh.key?(404).must_equal true
+      bh.key?('404').must_equal true
+    end
+
     it 'should not accept both an object and a block' do
       -> { Bihash.new('default 1') { 'default 2' } }.must_raise ArgumentError
     end
