@@ -71,7 +71,7 @@ describe Bihash do
       -> { Bihash[:k1 => 'val', :k2 => 'val'] }.must_raise ArgumentError
     end
 
-    it 'should not accept a hash that would result in ambigous mappings' do
+    it 'should not accept a hash that would result in ambiguous mappings' do
       -> { Bihash[1, 2, 2, 3] }.must_raise ArgumentError
     end
 
@@ -120,7 +120,7 @@ describe Bihash do
       bh[2].must_equal :k2
     end
 
-    it 'should return nil if the object does not repond to #to_hash' do
+    it 'should return nil if the object does not respond to #to_hash' do
       Bihash.try_convert(Object.new).must_equal nil
     end
 
