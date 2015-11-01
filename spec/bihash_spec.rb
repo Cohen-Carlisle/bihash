@@ -538,6 +538,10 @@ describe Bihash do
       (bh.default = 404).must_equal 404
       bh[:not_a_key].must_equal 404
     end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.default = 404 }.must_raise RuntimeError
+    end
   end
 
   describe '#default_proc' do
