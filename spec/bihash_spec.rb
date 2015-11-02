@@ -586,4 +586,24 @@ describe Bihash do
       -> { Bihash[].freeze.default_proc = proc { '' } }.must_raise RuntimeError
     end
   end
+
+  describe '#replace' do
+    it 'should replace the contents of receiver with the contents of the arg' do
+      receiver = Bihash[]
+      original_id = receiver.object_id
+      arg = Bihash[:key => 'value']
+      receiver.replace(arg).must_equal Bihash[:key => 'value']
+      arg[:another_key] = 'another_value'
+      receiver.object_id.must_equal original_id
+      receiver.must_equal Bihash[:key => 'value']
+    end
+
+    it 'should raise TypeError if arg is not a bihash' do
+      -> { Bihash.new.replace({:key => 'value'}) }.must_raise TypeError
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.replace(Bihash[:k, 'v']) }.must_raise RuntimeError
+    end
+  end
 end

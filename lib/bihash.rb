@@ -178,6 +178,16 @@ class Bihash
     @default_proc = arg
   end
 
+  def replace(other_bh)
+    raise_error_if_frozen
+    if !other_bh.is_a?(Bihash)
+      raise TypeError, "wrong replace type #{other_bh.class} (expected Bihash)"
+    end
+    @forward = other_bh.instance_variable_get(:@forward).dup
+    @reverse = other_bh.instance_variable_get(:@reverse).dup
+    self
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
