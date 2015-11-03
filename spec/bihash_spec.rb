@@ -606,4 +606,16 @@ describe Bihash do
       -> { Bihash.new.freeze.replace(Bihash[:k, 'v']) }.must_raise RuntimeError
     end
   end
+
+  describe '#compare_by_identity' do
+    it 'should set bihash to compare by identity instead of equality' do
+      bh = Bihash.new.compare_by_identity
+      key1, key2 = 'key', 'value'
+      bh[key1] = key2
+      bh['key'].must_equal nil
+      bh['value'].must_equal nil
+      bh[key1].must_equal 'value'
+      bh[key2].must_equal 'key'
+    end
+  end
 end

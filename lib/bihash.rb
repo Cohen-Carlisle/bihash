@@ -188,6 +188,12 @@ class Bihash
     self
   end
 
+  def compare_by_identity
+    @forward.compare_by_identity
+    @reverse.compare_by_identity
+    self
+  end
+
   def_delegators :@forward, :empty?, :length, :size, :flatten
 
   def self.new_from_hash(h)
