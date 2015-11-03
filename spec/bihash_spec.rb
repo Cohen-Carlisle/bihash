@@ -659,4 +659,27 @@ describe Bihash do
       Bihash.new.freeze.keep_if.must_be_instance_of Enumerator
     end
   end
+
+  describe 'select!' do
+    it 'should retain any pairs for which the block evaluates to true' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh_id = bh.object_id
+      bh.select! { |key1, key2| key1.even? }.object_id.must_equal bh_id
+      bh.must_equal Bihash[2 => :two, 4 => :four]
+    end
+
+    it 'should return nil if no changes were made to the bihash' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh.select! { |key1, key2| key1 < 5 }.must_equal nil
+      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash with a block' do
+      -> { Bihash.new.freeze.select! { true } }.must_raise RuntimeError
+    end
+
+    it 'should return an enumerator if not given a block' do
+      Bihash.new.freeze.select!.must_be_instance_of Enumerator
+    end
+  end
 end
