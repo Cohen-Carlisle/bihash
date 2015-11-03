@@ -618,4 +618,11 @@ describe Bihash do
       bh[key2].must_equal 'key'
     end
   end
+
+  describe '#compare_by_identity?' do
+    it 'should indicate whether bihash is comparing by identity' do
+      Bihash.new.compare_by_identity.compare_by_identity?.must_equal true
+      Bihash.new.compare_by_identity?.must_equal false
+    end
+  end
 end

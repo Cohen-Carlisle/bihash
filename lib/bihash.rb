@@ -194,7 +194,8 @@ class Bihash
     self
   end
 
-  def_delegators :@forward, :empty?, :length, :size, :flatten
+  def_delegators(:@forward,
+                 :empty?, :length, :size, :flatten, :compare_by_identity?)
 
   def self.new_from_hash(h)
     if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2
