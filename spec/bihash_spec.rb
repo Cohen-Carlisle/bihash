@@ -38,8 +38,8 @@ describe Bihash do
       bh = Bihash.new { |bihash, key| bihash[key] = key.to_s }
       bh[404].must_equal '404'
       bh.size.must_equal 1
-      bh.key?(404).must_equal true
-      bh.key?('404').must_equal true
+      bh.must_include 404
+      bh.must_include '404'
     end
 
     it 'should not accept both an object and a block' do
