@@ -226,10 +226,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash.new.each.must_be_instance_of Enumerator
-      array = []
-      Bihash[:k1 => 'v1', :k2 => 'v2'].each { |pair| array << pair }
-      array.must_equal [[:k1, 'v1'], [:k2, 'v2']]
+      enum = Bihash[:k1 => 'v1', :k2 => 'v2'].each
+      enum.must_be_instance_of Enumerator
+      enum.each { |pair| pair }.must_equal Bihash[:k1 => 'v1', :k2 => 'v2']
     end
 
     it 'should be aliased to #each_pair' do
@@ -477,7 +476,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash[1 => :one, 2 => :two].select.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1,k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
     end
   end
 
@@ -489,7 +490,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash[1 => :one, 2 => :two].reject.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].reject
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1,k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
     end
   end
 
@@ -643,7 +646,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash.new.freeze.delete_if.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].delete_if
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1, k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
     end
   end
 
@@ -660,7 +665,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash.new.freeze.keep_if.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].keep_if
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1, k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
     end
   end
 
@@ -683,7 +690,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash.new.freeze.select!.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select!
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1, k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
     end
   end
 
@@ -706,7 +715,9 @@ describe Bihash do
     end
 
     it 'should return an enumerator if not given a block' do
-      Bihash.new.freeze.reject!.must_be_instance_of Enumerator
+      enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].reject!
+      enum.must_be_instance_of Enumerator
+      enum.each { |k1, k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
     end
   end
 end

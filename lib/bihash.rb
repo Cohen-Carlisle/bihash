@@ -60,7 +60,7 @@ class Bihash
       @forward.each(&block)
       self
     else
-      @forward.each
+      to_enum(:each)
     end
   end
   alias :each_pair :each
@@ -131,7 +131,7 @@ class Bihash
     if block_given?
       self.class[@forward.select(&block)]
     else
-      @forward.select
+      to_enum(:select)
     end
   end
 
@@ -139,7 +139,7 @@ class Bihash
     if block_given?
       self.class[@forward.reject(&block)]
     else
-      @forward.reject
+      to_enum(:reject)
     end
   end
 
@@ -201,7 +201,7 @@ class Bihash
       @forward.each { |k,v| delete(k) if block.call(k,v) }
       self
     else
-      @forward.delete_if
+      to_enum(:delete_if)
     end
   end
 
@@ -211,7 +211,7 @@ class Bihash
       @forward.each { |k,v| delete(k) if !block.call(k,v) }
       self
     else
-      @forward.delete_if
+      to_enum(:keep_if)
     end
   end
 
@@ -222,7 +222,7 @@ class Bihash
       @forward.each { |k,v| delete(k) if !block.call(k,v) }
       old_size == size ? nil : self
     else
-      @forward.delete_if
+      to_enum(:select!)
     end
   end
 
@@ -233,7 +233,7 @@ class Bihash
       @forward.each { |k,v| delete(k) if block.call(k,v) }
       old_size == size ? nil : self
     else
-      @forward.delete_if
+      to_enum(:reject!)
     end
   end
 
