@@ -625,4 +625,21 @@ describe Bihash do
       Bihash.new.compare_by_identity?.must_equal false
     end
   end
+
+  describe '#delete_if' do
+    it 'should delete any pairs for which the block evaluates to true' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh_id = bh.object_id
+      bh.delete_if { |key1, key2| key1.even? }.object_id.must_equal bh_id
+      bh.must_equal Bihash[1 => :one, 3 => :three]
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash with a block' do
+      -> { Bihash.new.freeze.delete_if { false } }.must_raise RuntimeError
+    end
+
+    it 'should return an enumerator if not given a block' do
+      Bihash.new.freeze.delete_if.must_be_instance_of Enumerator
+    end
+  end
 end
