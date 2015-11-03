@@ -617,6 +617,10 @@ describe Bihash do
       bh[key1].must_equal 'value'
       bh[key2].must_equal 'key'
     end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.compare_by_identity }.must_raise RuntimeError
+    end
   end
 
   describe '#compare_by_identity?' do

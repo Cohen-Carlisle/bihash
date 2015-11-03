@@ -189,6 +189,7 @@ class Bihash
   end
 
   def compare_by_identity
+    raise_error_if_frozen
     @forward.compare_by_identity
     @reverse.compare_by_identity
     self
