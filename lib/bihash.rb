@@ -225,6 +225,17 @@ class Bihash
     end
   end
 
+  def reject!(&block)
+    if block_given?
+      raise_error_if_frozen
+      old_size = size
+      @forward.each { |k,v| delete(k) if block.call(k,v) }
+      old_size == size ? nil : self
+    else
+      @forward.delete_if
+    end
+  end
+
   def_delegator :@forward, :empty?
   def_delegator :@forward, :length
   def_delegator :@forward, :size

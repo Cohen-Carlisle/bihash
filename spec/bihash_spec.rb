@@ -682,4 +682,27 @@ describe Bihash do
       Bihash.new.freeze.select!.must_be_instance_of Enumerator
     end
   end
+
+  describe 'reject!' do
+    it 'should delete any pairs for which the block evaluates to true' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh_id = bh.object_id
+      bh.reject! { |key1, key2| key1.even? }.object_id.must_equal bh_id
+      bh.must_equal Bihash[1 => :one, 3 => :three]
+    end
+
+    it 'should return nil if no changes were made to the bihash' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh.reject! { |key1, key2| key1 > 5 }.must_equal nil
+      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash with a block' do
+      -> { Bihash.new.freeze.reject! { false } }.must_raise RuntimeError
+    end
+
+    it 'should return an enumerator if not given a block' do
+      Bihash.new.freeze.reject!.must_be_instance_of Enumerator
+    end
+  end
 end
