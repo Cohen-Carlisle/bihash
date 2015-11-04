@@ -239,7 +239,7 @@ describe Bihash do
 
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
-      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k2 => 2, :k1 => 1]
+      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[2 => :k2, 1 => :k1]
       (bh1 == bh2).must_equal true
     end
 
@@ -443,7 +443,7 @@ describe Bihash do
   describe '#hash' do
     it 'should provide a hash code' do
       b__h = Bihash[:k1 => 'v1', :k2 => 'v2']
-      same = Bihash[:k2 => 'v2', :k1 => 'v1']
+      same = Bihash['v2' => :k2, 'v1' => :k1]
       diff = Bihash[:k1 => 'v2', :k2 => 'v1']
       b__h.hash.must_equal same.hash
       b__h.hash.wont_equal diff.hash

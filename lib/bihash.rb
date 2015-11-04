@@ -66,7 +66,7 @@ class Bihash
   alias :each_pair :each
 
   def ==(rhs)
-    rhs.is_a?(self.class) && rhs.instance_variable_get(:@forward) == @forward
+    rhs.is_a?(self.class) && rhs.send(:merged_hash_attrs) == merged_hash_attrs
   end
   alias :eql? :==
 
@@ -124,7 +124,7 @@ class Bihash
   alias :inspect :to_s
 
   def hash
-    self.class.hash ^ @forward.hash
+    self.class.hash ^ merged_hash_attrs.hash
   end
 
   def select(&block)
@@ -267,5 +267,9 @@ class Bihash
 
   def default_value(key)
     @default_proc ? @default_proc.call(self, key) : @default
+  end
+
+  def merged_hash_attrs
+    @reverse.merge(@forward)
   end
 end
