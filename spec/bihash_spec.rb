@@ -441,12 +441,9 @@ describe Bihash do
   end
 
   describe '#hash' do
-    it 'should provide a hash code' do
-      b__h = Bihash[:k1 => 'v1', :k2 => 'v2']
-      same = Bihash['v2' => :k2, 'v1' => :k1]
-      diff = Bihash[:k1 => 'v2', :k2 => 'v1']
-      b__h.hash.must_equal same.hash
-      b__h.hash.wont_equal diff.hash
+    it 'should return the same hash code if two bihashes have the same pairs' do
+      bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[2 => :k2, 1 => :k1]
+      bh1.hash.must_equal bh2.hash
     end
   end
 
