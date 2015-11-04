@@ -671,7 +671,7 @@ describe Bihash do
     end
   end
 
-  describe 'select!' do
+  describe '#select!' do
     it 'should retain any pairs for which the block evaluates to true' do
       bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
       bh_id = bh.object_id
@@ -696,7 +696,7 @@ describe Bihash do
     end
   end
 
-  describe 'reject!' do
+  describe '#reject!' do
     it 'should delete any pairs for which the block evaluates to true' do
       bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
       bh_id = bh.object_id
