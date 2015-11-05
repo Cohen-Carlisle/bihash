@@ -237,6 +237,18 @@ class Bihash
     end
   end
 
+  def merge!(other_bh)
+    raise_error_if_frozen
+    raise_error_unless_bihash(other_bh)
+    other_bh.each { |k,v| store(k,v) }
+    self
+  end
+  alias :update :merge!
+
+  def merge(other_bh)
+    dup.merge!(other_bh)
+  end
+
   def_delegator :@forward, :empty?
   def_delegator :@forward, :length
   def_delegator :@forward, :size
@@ -263,6 +275,12 @@ class Bihash
 
   def raise_error_if_frozen
     raise "can't modify frozen Bihash" if frozen?
+  end
+
+  def raise_error_unless_bihash(obj)
+    unless obj.is_a?(Bihash)
+      raise TypeError, "wrong argument type #{obj.class} (expected Bihash)"
+    end
   end
 
   def default_value(key)

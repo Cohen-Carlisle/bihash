@@ -733,4 +733,42 @@ describe Bihash do
       enum.each { |k1, k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
     end
   end
+
+  describe '#merge!' do
+    it 'should merge bihashes, assigning each arg pair to the receiver' do
+      receiver = Bihash[:chips => :salsa, :milk => :cookies, :fish => :rice]
+      argument = Bihash[:fish => :chips, :soup => :salad]
+      return_value = Bihash[:milk => :cookies, :fish => :chips, :soup => :salad]
+      receiver.merge!(argument).must_equal return_value
+      receiver.must_equal return_value
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.merge!(Bihash.new) }.must_raise RuntimeError
+    end
+
+    it 'should raise TypeError if arg is not a bihash' do
+      -> { Bihash.new.merge!({:key => 'value'}) }.must_raise TypeError
+    end
+
+    it 'should be aliased to #update' do
+      bh = Bihash.new
+      bh.method(:update).must_equal bh.method(:merge!)
+    end
+  end
+
+  describe '#merge' do
+    it 'should merge bihashes, assigning each arg pair to a copy of reciever' do
+      receiver = Bihash[:chips => :salsa, :milk => :cookies, :fish => :rice]
+      original_receiver = receiver.dup
+      argument = Bihash[:fish => :chips, :soup => :salad]
+      return_value = Bihash[:milk => :cookies, :fish => :chips, :soup => :salad]
+      receiver.merge(argument).must_equal return_value
+      receiver.must_equal original_receiver
+    end
+
+    it 'should raise TypeError if arg is not a bihash' do
+      -> { Bihash.new.merge({:key => 'value'}) }.must_raise TypeError
+    end
+  end
 end
