@@ -180,9 +180,7 @@ class Bihash
 
   def replace(other_bh)
     raise_error_if_frozen
-    if !other_bh.is_a?(Bihash)
-      raise TypeError, "wrong replace type #{other_bh.class} (expected Bihash)"
-    end
+    raise_error_unless_bihash(other_bh)
     @forward = other_bh.instance_variable_get(:@forward).dup
     @reverse = other_bh.instance_variable_get(:@reverse).dup
     self
