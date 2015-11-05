@@ -466,10 +466,18 @@ describe Bihash do
   end
 
   describe '#select' do
-    it 'should return a bihash with the items selected by the block' do
-      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
-      bh.select { |k1,k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
-      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    describe 'should return a bihash with items selected by the block' do
+      it 'when only some items are selected' do
+        bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+        bh.select { |k1,k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
+        bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      end
+
+      it 'when all items are selected' do
+        bh = Bihash[2 => :two, 4 => :four, 6 => :six, 8 => :eight]
+        bh.select { |k1,k2| k1.even? }.must_equal bh
+        bh.must_equal bh
+      end
     end
 
     it 'should return an enumerator if not given a block' do
@@ -480,10 +488,18 @@ describe Bihash do
   end
 
   describe '#reject' do
-    it 'should return a bihash with the items not rejected by the block' do
-      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
-      bh.reject { |k1,k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
-      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    describe 'should return a bihash with items not rejected by the block' do
+      it 'when some items are rejected' do
+        bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+        bh.reject { |k1,k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
+        bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      end
+
+      it 'when no items are rejected' do
+        bh = Bihash[1 => :one, 3 => :three, 5 => :five, 7 => :seven]
+        bh.reject { |k1,k2| k1.even? }.must_equal bh
+        bh.must_equal bh
+      end
     end
 
     it 'should return an enumerator if not given a block' do
