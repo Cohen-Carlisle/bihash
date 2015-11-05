@@ -129,7 +129,7 @@ class Bihash
 
   def select(&block)
     if block_given?
-      self.class[@forward.select(&block)]
+      dup.keep_if(&block)
     else
       to_enum(:select)
     end
@@ -137,7 +137,7 @@ class Bihash
 
   def reject(&block)
     if block_given?
-      self.class[@forward.reject(&block)]
+      dup.delete_if(&block)
     else
       to_enum(:reject)
     end
