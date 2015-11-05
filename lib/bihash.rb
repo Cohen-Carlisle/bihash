@@ -22,7 +22,7 @@ class Bihash
 
   def self.try_convert(arg)
     h = Hash.try_convert(arg)
-    h ? self[h] : nil
+    h ? new_from_hash(h) : nil
   end
 
   def [](key)
