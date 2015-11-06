@@ -345,11 +345,6 @@ describe Bihash do
       h.delete(:key1)
       bh.must_include :key1
     end
-
-    it 'should be aliased to #to_hash' do
-      bh = Bihash.new
-      bh.method(:to_hash).must_equal bh.method(:to_h)
-    end
   end
 
   describe '#values_at' do
