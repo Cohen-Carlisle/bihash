@@ -4,18 +4,6 @@ class Bihash
   include Enumerable
   extend Forwardable
 
-  def initialize(*args, &block)
-    raise_error_if_frozen
-    if block_given? && !args.empty?
-      raise ArgumentError, "wrong number of arguments (#{args.size} for 0)"
-    elsif args.size > 1
-      raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
-    end
-    super()
-    @forward, @reverse = Hash.new, Hash.new
-    @default, @default_proc = args[0], block
-  end
-
   def self.[](*args)
     new_from_hash(Hash[*args])
   end
@@ -23,6 +11,10 @@ class Bihash
   def self.try_convert(arg)
     h = Hash.try_convert(arg)
     h ? new_from_hash(h) : nil
+  end
+
+  def ==(rhs)
+    rhs.is_a?(self.class) && rhs.send(:merged_hash_attrs) == merged_hash_attrs
   end
 
   def [](key)
@@ -40,45 +32,9 @@ class Bihash
     @reverse[key2] = key1
     @forward[key1] = key2
   end
-  alias :store :[]=
 
-  def delete(key, &block)
-    raise_error_if_frozen
-    if @forward.key?(key)
-      @reverse.delete(@forward[key])
-      @forward.delete(key)
-    elsif @reverse.key?(key)
-      @forward.delete(@reverse[key])
-      @reverse.delete(key)
-    else
-      @reverse.delete(key, &block)
-    end
-  end
-
-  def each(&block)
-    if block_given?
-      @forward.each(&block)
-      self
-    else
-      to_enum(:each)
-    end
-  end
-  alias :each_pair :each
-
-  def ==(rhs)
-    rhs.is_a?(self.class) && rhs.send(:merged_hash_attrs) == merged_hash_attrs
-  end
-  alias :eql? :==
-
-  def key?(arg)
-    @forward.key?(arg) || @reverse.key?(arg)
-  end
-  alias :has_key? :key?
-  alias :include? :key?
-  alias :member? :key?
-
-  def fetch(key)
-    @forward.key?(key) ? @forward.fetch(key) : @reverse.fetch(key)
+  def assoc(key)
+    @forward.assoc(key) || @reverse.assoc(key)
   end
 
   def clear
@@ -88,59 +44,14 @@ class Bihash
     self
   end
 
-  def rehash
+  def compare_by_identity
     raise_error_if_frozen
-    @forward.rehash
-    @reverse.rehash
+    @forward.compare_by_identity
+    @reverse.compare_by_identity
     self
   end
 
-  def to_h
-    @forward.dup
-  end
-
-  def values_at(*keys)
-    keys.map { |key| self[key] }
-  end
-
-  def shift
-    raise_error_if_frozen
-    if empty?
-      default_value(nil)
-    else
-      @reverse.shift
-      @forward.shift
-    end
-  end
-
-  def assoc(key)
-    @forward.assoc(key) || @reverse.assoc(key)
-  end
-
-  def to_s
-    "Bihash[#{@forward.to_s[1..-2]}]"
-  end
-  alias :inspect :to_s
-
-  def hash
-    self.class.hash ^ merged_hash_attrs.hash
-  end
-
-  def select(&block)
-    if block_given?
-      dup.keep_if(&block)
-    else
-      to_enum(:select)
-    end
-  end
-
-  def reject(&block)
-    if block_given?
-      dup.delete_if(&block)
-    else
-      to_enum(:reject)
-    end
-  end
+  def_delegator :@forward, :compare_by_identity?
 
   def default(*args)
     case args.count
@@ -159,9 +70,7 @@ class Bihash
     @default = default
   end
 
-  def default_proc
-    @default_proc
-  end
+  attr_reader :default_proc
 
   def default_proc=(arg)
     raise_error_if_frozen
@@ -177,19 +86,17 @@ class Bihash
     @default_proc = arg
   end
 
-  def replace(other_bh)
+  def delete(key, &block)
     raise_error_if_frozen
-    raise_error_unless_bihash(other_bh)
-    @forward = other_bh.instance_variable_get(:@forward).dup
-    @reverse = other_bh.instance_variable_get(:@reverse).dup
-    self
-  end
-
-  def compare_by_identity
-    raise_error_if_frozen
-    @forward.compare_by_identity
-    @reverse.compare_by_identity
-    self
+    if @forward.key?(key)
+      @reverse.delete(@forward[key])
+      @forward.delete(key)
+    elsif @reverse.key?(key)
+      @forward.delete(@reverse[key])
+      @reverse.delete(key)
+    else
+      @reverse.delete(key, &block)
+    end
   end
 
   def delete_if(&block)
@@ -202,6 +109,41 @@ class Bihash
     end
   end
 
+  def each(&block)
+    if block_given?
+      @forward.each(&block)
+      self
+    else
+      to_enum(:each)
+    end
+  end
+
+  alias :each_pair :each
+
+  def_delegator :@forward, :empty?
+
+  alias :eql? :==
+
+  def fetch(key)
+    @forward.key?(key) ? @forward.fetch(key) : @reverse.fetch(key)
+  end
+
+  def_delegator :@forward, :flatten
+
+  def has_key?(arg)
+    @forward.has_key?(arg) || @reverse.has_key?(arg)
+  end
+
+  def hash
+    self.class.hash ^ merged_hash_attrs.hash
+  end
+
+  alias :include? :has_key?
+
+  def inspect
+    "Bihash[#{@forward.to_s[1..-2]}]"
+  end
+
   def keep_if(&block)
     if block_given?
       raise_error_if_frozen
@@ -212,14 +154,35 @@ class Bihash
     end
   end
 
-  def select!(&block)
+  alias :key? :has_key?
+
+  def_delegator :@forward, :length
+
+  alias :member? :has_key?
+
+  def merge(other_bh)
+    dup.merge!(other_bh)
+  end
+
+  def merge!(other_bh)
+    raise_error_if_frozen
+    raise_error_unless_bihash(other_bh)
+    other_bh.each { |k,v| store(k,v) }
+    self
+  end
+
+  def rehash
+    raise_error_if_frozen
+    @forward.rehash
+    @reverse.rehash
+    self
+  end
+
+  def reject(&block)
     if block_given?
-      raise_error_if_frozen
-      old_size = size
-      @forward.each { |k,v| delete(k) if !block.call(k,v) }
-      old_size == size ? nil : self
+      dup.delete_if(&block)
     else
-      to_enum(:select!)
+      to_enum(:reject)
     end
   end
 
@@ -234,23 +197,60 @@ class Bihash
     end
   end
 
-  def merge!(other_bh)
+  def replace(other_bh)
     raise_error_if_frozen
     raise_error_unless_bihash(other_bh)
-    other_bh.each { |k,v| store(k,v) }
+    @forward = other_bh.instance_variable_get(:@forward).dup
+    @reverse = other_bh.instance_variable_get(:@reverse).dup
     self
   end
-  alias :update :merge!
 
-  def merge(other_bh)
-    dup.merge!(other_bh)
+  def select(&block)
+    if block_given?
+      dup.keep_if(&block)
+    else
+      to_enum(:select)
+    end
   end
 
-  def_delegator :@forward, :empty?
-  def_delegator :@forward, :length
+  def select!(&block)
+    if block_given?
+      raise_error_if_frozen
+      old_size = size
+      @forward.each { |k,v| delete(k) if !block.call(k,v) }
+      old_size == size ? nil : self
+    else
+      to_enum(:select!)
+    end
+  end
+
+  def shift
+    raise_error_if_frozen
+    if empty?
+      default_value(nil)
+    else
+      @reverse.shift
+      @forward.shift
+    end
+  end
+
   def_delegator :@forward, :size
-  def_delegator :@forward, :flatten
-  def_delegator :@forward, :compare_by_identity?
+
+  alias :store :[]=
+
+  def to_h
+    @forward.dup
+  end
+
+  alias :to_s :inspect
+
+  alias :update :merge!
+
+  def values_at(*keys)
+    keys.map { |key| self[key] }
+  end
+
+  private
 
   def self.new_from_hash(h)
     if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2
@@ -263,11 +263,29 @@ class Bihash
   end
   private_class_method :new_from_hash
 
-  private
+  def default_value(key)
+    @default_proc ? @default_proc.call(self, key) : @default
+  end
+
+  def initialize(*args, &block)
+    raise_error_if_frozen
+    if block_given? && !args.empty?
+      raise ArgumentError, "wrong number of arguments (#{args.size} for 0)"
+    elsif args.size > 1
+      raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
+    end
+    super()
+    @forward, @reverse = Hash.new, Hash.new
+    @default, @default_proc = args[0], block
+  end
 
   def initialize_copy(source)
     super
     @forward, @reverse = @forward.dup, @reverse.dup
+  end
+
+  def merged_hash_attrs
+    @reverse.merge(@forward)
   end
 
   def raise_error_if_frozen
@@ -278,13 +296,5 @@ class Bihash
     unless obj.is_a?(Bihash)
       raise TypeError, "wrong argument type #{obj.class} (expected Bihash)"
     end
-  end
-
-  def default_value(key)
-    @default_proc ? @default_proc.call(self, key) : @default
-  end
-
-  def merged_hash_attrs
-    @reverse.merge(@forward)
   end
 end
