@@ -10,7 +10,7 @@ class Bihash
 
   def self.try_convert(arg)
     h = Hash.try_convert(arg)
-    h ? new_from_hash(h) : nil
+    h && new_from_hash(h)
   end
 
   def ==(rhs)
