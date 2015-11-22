@@ -88,7 +88,7 @@ class Bihash
     @default_proc = arg
   end
 
-  def delete(key, &block)
+  def delete(key)
     raise_error_if_frozen
     if @forward.key?(key)
       @reverse.delete(@forward[key])
@@ -97,7 +97,7 @@ class Bihash
       @forward.delete(@reverse[key])
       @reverse.delete(key)
     else
-      @reverse.delete(key, &block)
+      yield(key) if block_given?
     end
   end
 
