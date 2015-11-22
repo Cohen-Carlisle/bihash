@@ -18,8 +18,10 @@ class Bihash
   end
 
   def [](key)
-    if key?(key)
-      @forward.key?(key) ? @forward[key] : @reverse[key]
+    if @forward.key?(key)
+      @forward[key]
+    elsif @reverse.key?(key)
+      @reverse[key]
     else
       default_value(key)
     end
