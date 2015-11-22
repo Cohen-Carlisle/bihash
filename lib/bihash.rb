@@ -101,10 +101,10 @@ class Bihash
     end
   end
 
-  def delete_if(&block)
+  def delete_if
     if block_given?
       raise_error_if_frozen
-      @forward.each { |k,v| delete(k) if block.call(k,v) }
+      @forward.each { |k,v| delete(k) if yield(k,v) }
       self
     else
       to_enum(:delete_if)
@@ -146,10 +146,10 @@ class Bihash
     "Bihash[#{@forward.to_s[1..-2]}]"
   end
 
-  def keep_if(&block)
+  def keep_if
     if block_given?
       raise_error_if_frozen
-      @forward.each { |k,v| delete(k) if !block.call(k,v) }
+      @forward.each { |k,v| delete(k) unless yield(k,v) }
       self
     else
       to_enum(:keep_if)
@@ -188,11 +188,11 @@ class Bihash
     end
   end
 
-  def reject!(&block)
+  def reject!
     if block_given?
       raise_error_if_frozen
       old_size = size
-      @forward.each { |k,v| delete(k) if block.call(k,v) }
+      @forward.each { |k,v| delete(k) if yield(k,v) }
       old_size == size ? nil : self
     else
       to_enum(:reject!)
@@ -215,11 +215,11 @@ class Bihash
     end
   end
 
-  def select!(&block)
+  def select!
     if block_given?
       raise_error_if_frozen
       old_size = size
-      @forward.each { |k,v| delete(k) if !block.call(k,v) }
+      @forward.each { |k,v| delete(k) unless yield(k,v) }
       old_size == size ? nil : self
     else
       to_enum(:select!)
