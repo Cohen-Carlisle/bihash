@@ -458,8 +458,18 @@ describe Bihash do
       bh2.fetch(nil).must_equal false
     end
 
-    it 'should raise KeyError if key does not exist' do
-      -> { Bihash.new.fetch(:not_a_key) }.must_raise KeyError
+    describe 'when the key is not found' do
+      it 'should raise KeyError when not supplied any default' do
+        -> { Bihash[].fetch(:not_a_key) }.must_raise KeyError
+      end
+
+      it 'should return the second arg when supplied with one' do
+        Bihash[].fetch(:not_a_key, :second_arg).must_equal :second_arg
+      end
+
+      it 'should call the block if supplied with one' do
+        Bihash[].fetch(404) { |k| "#{k} not found" }.must_equal '404 not found'
+      end
     end
   end
 

@@ -126,8 +126,8 @@ class Bihash
 
   alias :eql? :==
 
-  def fetch(key)
-    @forward.key?(key) ? @forward.fetch(key) : @reverse.fetch(key)
+  def fetch(key, *default, &block)
+    (@forward.key?(key) ? @forward : @reverse).fetch(key, *default, &block)
   end
 
   def_delegator :@forward, :flatten
