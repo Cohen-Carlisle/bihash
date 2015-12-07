@@ -188,11 +188,11 @@ class Bihash
     end
   end
 
-  def reject!
+  def reject!(&block)
     if block_given?
       raise_error_if_frozen
       old_size = size
-      @forward.each { |k,v| delete(k) if yield(k,v) }
+      delete_if(&block)
       old_size == size ? nil : self
     else
       to_enum(:reject!)
@@ -215,11 +215,11 @@ class Bihash
     end
   end
 
-  def select!
+  def select!(&block)
     if block_given?
       raise_error_if_frozen
       old_size = size
-      @forward.each { |k,v| delete(k) unless yield(k,v) }
+      keep_if(&block)
       old_size == size ? nil : self
     else
       to_enum(:select!)
