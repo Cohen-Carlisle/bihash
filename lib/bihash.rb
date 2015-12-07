@@ -277,7 +277,7 @@ class Bihash
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
     end
     super()
-    @forward, @reverse = Hash.new, Hash.new
+    @forward, @reverse = {}, {}
     @default, @default_proc = args[0], block
   end
 
