@@ -175,6 +175,9 @@ class Bihash
 
   def rehash
     raise_error_if_frozen
+    if illegal_state?
+      raise 'Cannot rehash while a key is duplicated outside its own pair'
+    end
     @forward.rehash
     @reverse.rehash
     self
@@ -255,18 +258,23 @@ class Bihash
   private
 
   def self.new_from_hash(h)
-    if (h.keys | h.values).size + h.select { |k,v| k == v }.size < h.size * 2
-      raise ArgumentError, 'A key would be duplicated outside its own pair'
-    end
     bihash = new
     bihash.instance_variable_set(:@reverse, h.invert)
     bihash.instance_variable_set(:@forward, h)
+    if bihash.send(:illegal_state?)
+      raise ArgumentError, 'A key would be duplicated outside its own pair'
+    end
     bihash
   end
   private_class_method :new_from_hash
 
   def default_value(key)
     @default_proc ? @default_proc.call(self, key) : @default
+  end
+
+  def illegal_state?
+    fw = @forward
+    (fw.keys | fw.values).size + fw.select { |k,v| k == v }.size < fw.size * 2
   end
 
   def initialize(*args, &block)

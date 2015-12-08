@@ -585,6 +585,12 @@ describe Bihash do
     it 'should raise RuntimeError if called on a frozen bihash' do
       -> { Bihash.new.freeze.rehash }.must_raise RuntimeError
     end
+
+    it 'should raise RuntimeError if called when key duplicated outside pair' do
+      bh = Bihash[[1], [2], [3], [4]]
+      (bh[[4]] << 1).shift
+      -> { bh.rehash }.must_raise RuntimeError
+    end
   end
 
   describe '#reject' do
