@@ -1,7 +1,4 @@
-gem 'minitest'
-require 'minitest/spec'
-require 'minitest/autorun'
-require 'bihash'
+require 'spec_helper'
 
 describe Bihash do
   it 'should be enumerable' do

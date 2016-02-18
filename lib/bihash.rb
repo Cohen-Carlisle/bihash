@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'bihash/version'
 
 class Bihash
   include Enumerable
