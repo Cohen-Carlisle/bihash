@@ -111,6 +111,11 @@ describe Bihash do
       bh[2].must_equal :k2
     end
 
+    it 'should convert a bihash to a bihash' do
+      bh = Bihash[:key => 'value']
+      Bihash.try_convert(bh).must_equal bh
+    end
+
     it 'should return nil if the object does not respond to #to_hash' do
       Bihash.try_convert(Object.new).must_equal nil
     end
