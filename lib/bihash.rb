@@ -131,6 +131,10 @@ class Bihash
     (@forward.key?(key) ? @forward : @reverse).fetch(key, *default, &block)
   end
 
+  def fetch_values(*keys)
+    keys.map { |key| fetch(key) }
+  end
+
   def_delegator :@forward, :flatten
 
   def has_key?(arg)

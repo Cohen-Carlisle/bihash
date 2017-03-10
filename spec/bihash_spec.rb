@@ -470,6 +470,26 @@ describe Bihash do
     end
   end
 
+  describe '#fetch_values' do
+    it 'should return an array of values corresponding to the given keys' do
+      Bihash[1 => :one, 2 => :two].fetch_values(1, 2).must_equal [:one, :two]
+      Bihash[1 => :one, 2 => :two].fetch_values(:one, :two).must_equal [1, 2]
+      Bihash[1 => :one, 2 => :two].fetch_values(1, :two).must_equal [:one, 2]
+    end
+
+    it 'should raise a KeyError if any key is not found' do
+      -> { Bihash.new.fetch_values(404) }.must_raise KeyError
+    end
+
+    it 'should not duplicate entries if a key equals its value' do
+      Bihash[:key => :key].fetch_values(:key).must_equal [:key]
+    end
+
+    it 'should return an empty array with no args' do
+      Bihash[:key => 'value'].fetch_values.must_equal []
+    end
+  end
+
   describe '#flatten' do
     it 'extract the pairs into an array' do
       Bihash[:k1 => 'v1', :k2 => 'v2'].flatten.must_equal [:k1, 'v1', :k2, 'v2']
