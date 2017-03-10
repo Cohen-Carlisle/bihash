@@ -14,8 +14,28 @@ class Bihash
     h && new_from_hash(h)
   end
 
+  def <(rhs)
+    raise_error_unless_bihash(rhs)
+    merged_hash_attrs < rhs.send(:merged_hash_attrs)
+  end
+
+  def <=(rhs)
+    raise_error_unless_bihash(rhs)
+    merged_hash_attrs <= rhs.send(:merged_hash_attrs)
+  end
+
   def ==(rhs)
-    rhs.is_a?(self.class) && rhs.send(:merged_hash_attrs) == merged_hash_attrs
+    rhs.is_a?(self.class) && merged_hash_attrs == rhs.send(:merged_hash_attrs)
+  end
+
+  def >(rhs)
+    raise_error_unless_bihash(rhs)
+    merged_hash_attrs > rhs.send(:merged_hash_attrs)
+  end
+
+  def >=(rhs)
+    raise_error_unless_bihash(rhs)
+    merged_hash_attrs >= rhs.send(:merged_hash_attrs)
   end
 
   def [](key)

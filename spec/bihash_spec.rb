@@ -125,6 +125,42 @@ describe Bihash do
     end
   end
 
+  describe '#<' do
+    it 'should return raise an error if the right hand side is not a bihash' do
+      -> { Bihash[a: 1, b: 2] < {a: 1, b: 2, c: 3} }.must_raise TypeError
+    end
+
+    it 'should return true when the right hand side a strict subset of self' do
+      (Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3]).must_equal true
+    end
+
+    it 'should return false when the right hand side is equal to self' do
+      (Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2]).must_equal false
+    end
+
+    it 'should return false when the right hand side is not a subset of self' do
+      (Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2]).must_equal false
+    end
+  end
+
+  describe '#<=' do
+    it 'should return raise an error if the right hand side is not a bihash' do
+      -> { Bihash[a: 1, b: 2] <= {a: 1, b: 2, c: 3} }.must_raise TypeError
+    end
+
+    it 'should return true when the right hand side a strict subset of self' do
+      (Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3]).must_equal true
+    end
+
+    it 'should return true when the right hand side is equal to self' do
+      (Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2]).must_equal true
+    end
+
+    it 'should return false when the right hand side is not a subset of self' do
+      (Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2]).must_equal false
+    end
+  end
+
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[2 => :k2, 1 => :k1]
@@ -139,6 +175,42 @@ describe Bihash do
     it 'should be aliased to #eql?' do
       bh = Bihash.new
       bh.method(:eql?).must_equal bh.method(:==)
+    end
+  end
+
+  describe '#>' do
+    it 'should return raise an error if the right hand side is not a bihash' do
+      -> { Bihash[a: 1, b: 2] > {a: 1, b: 2, c: 3} }.must_raise TypeError
+    end
+
+    it 'should return true when the right hand side a strict superset of self' do
+      (Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2]).must_equal true
+    end
+
+    it 'should return false when the right hand side is equal to self' do
+      (Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2]).must_equal false
+    end
+
+    it 'should return false when the right hand side is not a superset of self' do
+      (Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3]).must_equal false
+    end
+  end
+
+  describe '#>=' do
+    it 'should return raise an error if the right hand side is not a bihash' do
+      -> { Bihash[a: 1, b: 2] >= {a: 1, b: 2, c: 3} }.must_raise TypeError
+    end
+
+    it 'should return true when the right hand side a strict superset of self' do
+      (Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2]).must_equal true
+    end
+
+    it 'should return true when the right hand side is equal to self' do
+      (Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2]).must_equal true
+    end
+
+    it 'should return false when the right hand side is not a superset of self' do
+      (Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
 
