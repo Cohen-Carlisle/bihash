@@ -248,6 +248,8 @@ class Bihash
     @forward.dup
   end
 
+  alias :to_hash :to_h
+
   alias :to_s :inspect
 
   alias :update :merge!
