@@ -112,6 +112,10 @@ class Bihash
     end
   end
 
+  def dig(*keys)
+    (@forward.key?(keys[0]) ? @forward : @reverse).dig(*keys)
+  end
+
   def each(&block)
     if block_given?
       @forward.each(&block)

@@ -402,6 +402,29 @@ describe Bihash do
     end
   end
 
+  describe '#dig' do
+    it 'can traverse nested bihashes' do
+      bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
+      bh.dig(:foo, :bar, :baz).must_equal 4
+      bh.dig(:foo, :bar, 4).must_equal :baz
+    end
+
+    it 'can traverse nested hashes' do
+      bh = Bihash[foo: {bar: {baz: 4}}]
+      bh.dig(:foo, :bar, :baz).must_equal 4
+    end
+
+    it 'can traverse nested arrays' do
+      bh = Bihash[foo: [[4]]]
+      bh.dig(:foo, 0, 0).must_equal 4
+    end
+
+    it 'returns nil if any intermediate step is nil' do
+      bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
+      bh.dig(:foo, :bur, :boz).must_equal nil
+    end
+  end
+
   describe '#dup' do
     it 'should make a copy of the bihash' do
       bh = Bihash[1 => :one]
