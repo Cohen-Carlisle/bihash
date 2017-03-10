@@ -768,6 +768,16 @@ describe Bihash do
     end
   end
 
+  describe '#to_proc' do
+    it 'should convert the bihash to a proc' do
+      Bihash[].to_proc.must_be_instance_of Proc
+    end
+
+    it 'the resulting proc should call #[] when called' do
+      Bihash[:key => 'value'].to_proc.call(:key).must_equal 'value'
+    end
+  end
+
   describe '#to_s' do
     it 'should return a nice string representing the bihash' do
       bh = Bihash[:k1 => 'v1', :k2 => [:v2], :k3 => {:k4 => 'v4'}]

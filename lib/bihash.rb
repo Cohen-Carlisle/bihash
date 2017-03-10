@@ -254,6 +254,10 @@ class Bihash
 
   alias :to_hash :to_h
 
+  def to_proc
+    method(:[]).to_proc
+  end
+
   alias :to_s :inspect
 
   alias :update :merge!
