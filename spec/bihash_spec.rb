@@ -126,37 +126,37 @@ describe Bihash do
   end
 
   describe '#<' do
-    it 'should return raise an error if the right hand side is not a bihash' do
+    it 'should raise an error if the right hand side is not a bihash' do
       -> { Bihash[a: 1, b: 2] < {a: 1, b: 2, c: 3} }.must_raise TypeError
     end
 
-    it 'should return true when the right hand side a strict subset of self' do
+    it 'should return true when the argument is a strict subset of self' do
       (Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
-    it 'should return false when the right hand side is equal to self' do
+    it 'should return false when the argument is equal to self' do
       (Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2]).must_equal false
     end
 
-    it 'should return false when the right hand side is not a subset of self' do
+    it 'should return false when the argument is not a subset of self' do
       (Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2]).must_equal false
     end
   end
 
   describe '#<=' do
-    it 'should return raise an error if the right hand side is not a bihash' do
+    it 'should raise an error if the right hand side is not a bihash' do
       -> { Bihash[a: 1, b: 2] <= {a: 1, b: 2, c: 3} }.must_raise TypeError
     end
 
-    it 'should return true when the right hand side a strict subset of self' do
+    it 'should return true when the argument is a strict subset of self' do
       (Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
-    it 'should return true when the right hand side is equal to self' do
+    it 'should return true when the argument is equal to self' do
       (Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2]).must_equal true
     end
 
-    it 'should return false when the right hand side is not a subset of self' do
+    it 'should return false when the argument is not a subset of self' do
       (Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2]).must_equal false
     end
   end
@@ -179,37 +179,37 @@ describe Bihash do
   end
 
   describe '#>' do
-    it 'should return raise an error if the right hand side is not a bihash' do
+    it 'should raise an error if the right hand side is not a bihash' do
       -> { Bihash[a: 1, b: 2] > {a: 1, b: 2, c: 3} }.must_raise TypeError
     end
 
-    it 'should return true when the right hand side a strict superset of self' do
+    it 'should return true when the argument is a strict superset of self' do
       (Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2]).must_equal true
     end
 
-    it 'should return false when the right hand side is equal to self' do
+    it 'should return false when the argument is equal to self' do
       (Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2]).must_equal false
     end
 
-    it 'should return false when the right hand side is not a superset of self' do
+    it 'should return false when the argument is not a superset of self' do
       (Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
 
   describe '#>=' do
-    it 'should return raise an error if the right hand side is not a bihash' do
+    it 'should raise an error if the right hand side is not a bihash' do
       -> { Bihash[a: 1, b: 2] >= {a: 1, b: 2, c: 3} }.must_raise TypeError
     end
 
-    it 'should return true when the right hand side a strict superset of self' do
+    it 'should return true when the argument is a strict superset of self' do
       (Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
-    it 'should return true when the right hand side is equal to self' do
+    it 'should return true when the argument is equal to self' do
       (Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
-    it 'should return false when the right hand side is not a superset of self' do
+    it 'should return false when the argument is not a superset of self' do
       (Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
@@ -475,23 +475,23 @@ describe Bihash do
   end
 
   describe '#dig' do
-    it 'can traverse nested bihashes' do
+    it 'should traverse nested bihashes' do
       bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
       bh.dig(:foo, :bar, :baz).must_equal 4
       bh.dig(:foo, :bar, 4).must_equal :baz
     end
 
-    it 'can traverse nested hashes' do
+    it 'should traverse nested hashes' do
       bh = Bihash[foo: {bar: {baz: 4}}]
       bh.dig(:foo, :bar, :baz).must_equal 4
     end
 
-    it 'can traverse nested arrays' do
+    it 'should traverse nested arrays' do
       bh = Bihash[foo: [[4]]]
       bh.dig(:foo, 0, 0).must_equal 4
     end
 
-    it 'returns nil if any intermediate step is nil' do
+    it 'should return nil if any intermediate step is nil' do
       bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
       bh.dig(:foo, :bur, :boz).must_equal nil
     end
@@ -591,7 +591,7 @@ describe Bihash do
   end
 
   describe '#flatten' do
-    it 'extract the pairs into an array' do
+    it 'should extract the pairs into an array' do
       Bihash[:k1 => 'v1', :k2 => 'v2'].flatten.must_equal [:k1, 'v1', :k2, 'v2']
     end
 
@@ -711,14 +711,16 @@ describe Bihash do
   end
 
   describe '#reject' do
-    describe 'should return a bihash with items not rejected by the block' do
-      it 'when some items are rejected' do
+    describe 'when some items are rejected' do
+      it 'should return a bihash with items not rejected by the block' do
         bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
         bh.reject { |k1,k2| k1.even? }.must_equal Bihash[1 => :one, 3 => :three]
         bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
       end
+    end
 
-      it 'when no items are rejected' do
+    describe 'when no items are rejected' do
+      it 'should return a bihash with items not rejected by the block' do
         bh = Bihash[1 => :one, 3 => :three, 5 => :five, 7 => :seven]
         bh.reject { |k1,k2| k1.even? }.must_equal bh
         bh.must_equal bh
@@ -778,14 +780,16 @@ describe Bihash do
   end
 
   describe '#select' do
-    describe 'should return a bihash with items selected by the block' do
-      it 'when only some items are selected' do
+    describe 'when only some items are selected' do
+      it 'should return a bihash with items selected by the block' do
         bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
         bh.select { |k1,k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
         bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
       end
+    end
 
-      it 'when all items are selected' do
+    describe 'when all items are selected' do
+      it 'should return a bihash with items selected by the block' do
         bh = Bihash[2 => :two, 4 => :four, 6 => :six, 8 => :eight]
         bh.select { |k1,k2| k1.even? }.must_equal bh
         bh.must_equal bh
@@ -868,7 +872,7 @@ describe Bihash do
       Bihash[].to_proc.must_be_instance_of Proc
     end
 
-    it 'the resulting proc should call #[] when called' do
+    it 'should call #[] on the bihash when the proc is called' do
       Bihash[:key => 'value'].to_proc.call(:key).must_equal 'value'
     end
   end
