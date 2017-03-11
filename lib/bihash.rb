@@ -1,5 +1,6 @@
 require 'forwardable'
 require 'bihash/version'
+require 'bihash/unimplemented_methods'
 
 class Bihash
   include Enumerable

@@ -5,6 +5,17 @@ describe Bihash do
     Bihash.must_include Enumerable
   end
 
+  Bihash::UNIMPLEMENTED_METHODS.each do |method|
+    it "should report that it does not respond to ##{method}" do
+      Bihash.new.respond_to?(method).must_equal false
+    end
+
+    it "should raise NoMethodError if ##{method} is called" do
+      error = -> { Bihash.new.send(method) }.must_raise NoMethodError
+      error.message.must_equal "Bihash##{method} not implemented"
+    end
+  end
+
   describe '::[]' do
     it 'should be able to create an empty bihash' do
       bh = Bihash[]
