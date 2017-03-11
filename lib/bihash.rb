@@ -222,7 +222,7 @@ class Bihash
 
   def reject(&block)
     if block_given?
-      dup.delete_if(&block)
+      dup.tap { |d| d.reject!(&block) }
     else
       to_enum(:reject)
     end
@@ -249,7 +249,7 @@ class Bihash
 
   def select(&block)
     if block_given?
-      dup.keep_if(&block)
+      dup.tap { |d| d.select!(&block) }
     else
       to_enum(:select)
     end
