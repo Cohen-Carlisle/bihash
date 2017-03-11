@@ -66,7 +66,7 @@ describe Bihash do
       bh = Bihash.new
       bh.must_be_instance_of Bihash
       bh.must_be_empty
-      bh[:not_a_key].must_equal nil
+      bh[:not_a_key].must_be_nil
     end
 
     it 'should create an empty bihash with a default if given an object arg' do
@@ -117,7 +117,7 @@ describe Bihash do
     end
 
     it 'should return nil if the object does not respond to #to_hash' do
-      Bihash.try_convert(Object.new).must_equal nil
+      Bihash.try_convert(Object.new).must_be_nil
     end
 
     it 'should not accept a hash with duplicate values' do
@@ -224,10 +224,10 @@ describe Bihash do
     it 'should return falsey values correctly' do
       bh1 = Bihash[nil => false]
       bh1[nil].must_equal false
-      bh1[false].must_equal nil
+      bh1[false].must_be_nil
 
       bh2 = Bihash[false => nil]
-      bh2[false].must_equal nil
+      bh2[false].must_be_nil
       bh2[nil].must_equal false
     end
   end
@@ -278,14 +278,14 @@ describe Bihash do
 
     it 'should return nil if the argument is not a key' do
       bh = Bihash.new(404)
-      bh.assoc(:not_a_key).must_equal nil
+      bh.assoc(:not_a_key).must_be_nil
     end
 
     it 'should find the key using #==' do
       bh = Bihash[[] => 'array']
       bh['array'] << 'modified'
       bh.assoc(['modified']).must_equal [['modified'], 'array']
-      bh.assoc([]).must_equal nil
+      bh.assoc([]).must_be_nil
     end
   end
 
@@ -323,7 +323,7 @@ describe Bihash do
 
     it 'should return nil if no changes were made to the bihash' do
       bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
-      bh.compact!.must_equal nil
+      bh.compact!.must_be_nil
       bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
@@ -349,7 +349,7 @@ describe Bihash do
       bh = Bihash[1 => :one]
       clone = bh.clone
       clone[2] = :two
-      bh[2].must_equal nil
+      bh[2].must_be_nil
     end
   end
 
@@ -358,8 +358,8 @@ describe Bihash do
       bh = Bihash.new.compare_by_identity
       key1, key2 = 'key', 'value'
       bh[key1] = key2
-      bh['key'].must_equal nil
-      bh['value'].must_equal nil
+      bh['key'].must_be_nil
+      bh['value'].must_be_nil
       bh[key1].must_equal 'value'
       bh[key2].must_equal 'key'
     end
@@ -384,9 +384,9 @@ describe Bihash do
     describe 'when there is not a default proc' do
       it 'should return the default' do
         bh1 = Bihash[:key => 'value']
-        bh1.default.must_equal nil
-        bh1.default(:not_a_key).must_equal nil
-        bh1.default(:key).must_equal nil
+        bh1.default.must_be_nil
+        bh1.default(:not_a_key).must_be_nil
+        bh1.default(:key).must_be_nil
 
         bh2 = Bihash.new(404)
         bh2[:key] = 'value'
@@ -398,7 +398,7 @@ describe Bihash do
 
     describe 'when there is a default proc' do
       it 'should return the default if called with no argument' do
-        Bihash.new { 'proc called' }.default.must_equal nil
+        Bihash.new { 'proc called' }.default.must_be_nil
       end
 
       it 'should call the default proc when called with an argument' do
@@ -437,8 +437,8 @@ describe Bihash do
     end
 
     it 'should return nil if there is no default proc' do
-      Bihash.new.default_proc.must_equal nil
-      Bihash.new(404).default_proc.must_equal nil
+      Bihash.new.default_proc.must_be_nil
+      Bihash.new(404).default_proc.must_be_nil
     end
   end
 
@@ -453,8 +453,8 @@ describe Bihash do
     it 'should set the default value to nil if argument is nil' do
       bh = Bihash.new(:default_object)
       bh[:not_a_key].must_equal :default_object
-      (bh.default_proc = nil).must_equal nil
-      bh[:not_a_key].must_equal nil
+      (bh.default_proc = nil).must_be_nil
+      bh[:not_a_key].must_be_nil
     end
 
     it 'should raise TypeError if not given a non-proc (except nil)' do
@@ -536,7 +536,7 @@ describe Bihash do
 
     it 'should return nil if any intermediate step is nil' do
       bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
-      bh.dig(:foo, :bur, :boz).must_equal nil
+      bh.dig(:foo, :bur, :boz).must_be_nil
     end
   end
 
@@ -545,7 +545,7 @@ describe Bihash do
       bh = Bihash[1 => :one]
       dup = bh.dup
       dup[2] = :two
-      bh[2].must_equal nil
+      bh[2].must_be_nil
     end
   end
 
@@ -591,10 +591,10 @@ describe Bihash do
     it 'should return falsey values correctly' do
       bh1 = Bihash[nil => false]
       bh1.fetch(nil).must_equal false
-      bh1.fetch(false).must_equal nil
+      bh1.fetch(false).must_be_nil
 
       bh2 = Bihash[false => nil]
-      bh2.fetch(false).must_equal nil
+      bh2.fetch(false).must_be_nil
       bh2.fetch(nil).must_equal false
     end
 
@@ -737,7 +737,7 @@ describe Bihash do
     it 'should recompute all key hash values and return the bihash' do
       bh = Bihash[[] => :array]
       bh[:array] << 1
-      bh[[1]].must_equal nil
+      bh[[1]].must_be_nil
       bh.rehash[[1]].must_equal :array
       bh[[1]].must_equal :array
     end
@@ -787,7 +787,7 @@ describe Bihash do
 
     it 'should return nil if no changes were made to the bihash' do
       bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
-      bh.reject! { |key1, key2| key1 > 5 }.must_equal nil
+      bh.reject! { |key1, key2| key1 > 5 }.must_be_nil
       bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
@@ -856,7 +856,7 @@ describe Bihash do
 
     it 'should return nil if no changes were made to the bihash' do
       bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
-      bh.select! { |key1, key2| key1 < 5 }.must_equal nil
+      bh.select! { |key1, key2| key1 < 5 }.must_be_nil
       bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
@@ -879,7 +879,7 @@ describe Bihash do
     end
 
     it 'should return the default value if bihash is empty' do
-      Bihash.new.shift.must_equal nil
+      Bihash.new.shift.must_be_nil
       Bihash.new(404).shift.must_equal 404
       Bihash.new { 'd3f4u17' }.shift.must_equal 'd3f4u17'
     end
