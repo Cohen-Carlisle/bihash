@@ -67,6 +67,14 @@ class Bihash
     self
   end
 
+  def compact
+    dup.tap { |d| d.compact! }
+  end
+
+  def compact!
+    reject! { |k1, k2| k1.nil? || k2.nil? }
+  end
+
   def compare_by_identity
     raise_error_if_frozen
     @forward.compare_by_identity

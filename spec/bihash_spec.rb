@@ -289,6 +289,49 @@ describe Bihash do
     end
   end
 
+  describe '#compact' do
+    describe 'when any pairs contain a nil key' do
+      it 'should return a new bihash with any pairs containing nil removed' do
+        bh = Bihash[1 => :one, 2 => nil, 3 => :three]
+        bh.compact.must_equal Bihash[1 => :one, 3 => :three]
+        bh.must_equal Bihash[1 => :one, 2 => nil, 3 => :three]
+      end
+    end
+
+    describe 'no pairs contain a nil key' do
+      it 'should return a copy of the original bihash' do
+        bh = Bihash[1 => :one, 2 => :two, 3 => :three]
+        compacted_bh = bh.compact
+        compacted_bh.must_equal Bihash[1 => :one, 2=> :two, 3 => :three]
+        compacted_bh.object_id.wont_equal bh.object_id
+      end
+    end
+  end
+
+  describe '#compact!' do
+    it 'should delete any pairs containing nil' do
+      bh1 = Bihash[1 => :one, 2 => nil, 3 => :three]
+      bh1_id = bh1.object_id
+      bh1.compact!.object_id.must_equal bh1_id
+      bh1.must_equal Bihash[1 => :one, 3 => :three]
+
+      bh2 = Bihash[1 => :one, 2 => nil, 3 => :three]
+      bh2_id = bh2.object_id
+      bh2.compact!.object_id.must_equal bh2_id
+      bh2.must_equal Bihash[1 => :one, 3 => :three]
+    end
+
+    it 'should return nil if no changes were made to the bihash' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+      bh.compact!.must_equal nil
+      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      -> { Bihash.new.freeze.compact! }.must_raise RuntimeError
+    end
+  end
+
   describe '#clear' do
     it 'should remove all pairs and return the bihash' do
       bh = Bihash[:key => 'value']
