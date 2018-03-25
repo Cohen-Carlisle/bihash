@@ -271,6 +271,14 @@ class Bihash
 
   def_delegator :@forward, :size
 
+  def slice(*args)
+    self.class.new.tap do |bh|
+      args.each do |arg|
+        bh[arg] = self[arg] if key?(arg)
+      end
+    end
+  end
+
   alias :store :[]=
 
   def to_h
