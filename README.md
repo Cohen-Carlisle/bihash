@@ -7,6 +7,19 @@ A simple gem that implements a bidrectional hash
 
 Use as a hash, except that keys and values are interchangeable.
 
+```ruby
+abbreviations = Bihash["abbr" => "abbreviation"]
+# => Bihash["abbr"=>"abbreviation"]
+abbreviations["lol"] = "laugh out loud"
+# => "laugh out loud"
+puts abbreviations
+# => Bihash["abbr"=>"abbreviation", "lol"=>"laugh out loud"]
+abbreviations["lol"]
+# => "laugh out loud"
+abbreviations["laugh out loud"]
+# => "lol"
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
