@@ -863,6 +863,19 @@ describe Bihash do
     end
   end
 
+  describe '#slice' do
+    it 'should return a new bihash with only the pairs that are in the args' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three]
+      bh.slice(1, :one, :two, "nope").must_equal Bihash[1 => :one, 2 => :two]
+      bh.must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
+    end
+
+    it 'should return a vanilla bihash without default values, etc.' do
+      sliced_bh = Bihash.new(404).slice
+      sliced_bh.default.must_be_nil
+    end
+  end
+
   describe '#to_h' do
     it 'should return a copy of the forward hash' do
       bh = Bihash[:key1 => 'val1', :key2 => 'val2']

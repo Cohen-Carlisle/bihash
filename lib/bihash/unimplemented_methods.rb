@@ -7,6 +7,8 @@ class Bihash
     'values',
     'each_key',
     'each_value',
+    'transform_keys',
+    'transform_keys!',
     'transform_values',
     'transform_values!',
     # O(n) reverse lookups
