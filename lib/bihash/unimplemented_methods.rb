@@ -16,7 +16,10 @@ class Bihash
     'value?',
     'has_value?',
     # meaningless on bihash as both sides already hashed
-    'invert'
+    'invert',
+    # mass removal of nil, but a bihash can have only one pair containing nil
+    'compact',
+    'compact!'
   ]
 
   def respond_to?(method, private = false)
