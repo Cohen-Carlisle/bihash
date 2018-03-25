@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Cohen-Carlisle/bihash.svg?branch=master)](https://travis-ci.org/Cohen-Carlisle/bihash)
 # Bihash
 
 A simple gem that implements a bidrectional hash
