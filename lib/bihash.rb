@@ -160,6 +160,25 @@ class Bihash
     keys.map { |key| fetch(key) }
   end
 
+  def filter(&block)
+    if block_given?
+      dup.tap { |d| d.select!(&block) }
+    else
+      to_enum(:select)
+    end
+  end
+
+  def filter!(&block)
+    if block_given?
+      raise_error_if_frozen
+      old_size = size
+      keep_if(&block)
+      old_size == size ? nil : self
+    else
+      to_enum(:select!)
+    end
+  end
+
   def_delegator :@forward, :flatten
 
   def has_key?(arg)
@@ -240,24 +259,9 @@ class Bihash
     self
   end
 
-  def select(&block)
-    if block_given?
-      dup.tap { |d| d.select!(&block) }
-    else
-      to_enum(:select)
-    end
-  end
+  alias :select :filter
 
-  def select!(&block)
-    if block_given?
-      raise_error_if_frozen
-      old_size = size
-      keep_if(&block)
-      old_size == size ? nil : self
-    else
-      to_enum(:select!)
-    end
-  end
+  alias :select! :filter!
 
   def shift
     raise_error_if_frozen

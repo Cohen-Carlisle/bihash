@@ -812,6 +812,11 @@ describe Bihash do
       enum.must_be_instance_of Enumerator
       enum.each { |k1,k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
     end
+
+    it 'should be aliased to #filter' do
+      bh = Bihash.new
+      bh.method(:filter).must_equal bh.method(:select)
+    end
   end
 
   describe '#select!' do
@@ -836,6 +841,11 @@ describe Bihash do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select!
       enum.must_be_instance_of Enumerator
       enum.each { |k1, k2| k1.even? }.must_equal Bihash[2 => :two, 4 => :four]
+    end
+
+    it 'should be aliased to #filter!' do
+      bh = Bihash.new
+      bh.method(:filter!).must_equal bh.method(:select!)
     end
   end
 
@@ -885,7 +895,7 @@ describe Bihash do
       bh.must_include :key1
     end
 
-    it 'should be an alias of #to_hash' do
+    it 'should be aliased to #to_hash' do
       bh = Bihash.new
       bh.method(:to_hash).must_equal bh.method(:to_h)
     end
