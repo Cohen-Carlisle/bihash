@@ -885,7 +885,7 @@ describe Bihash do
       bh.must_include :key1
     end
 
-    it 'should be an alias of #to_hash' do
+    it 'should be aliased to #to_hash' do
       bh = Bihash.new
       bh.method(:to_hash).must_equal bh.method(:to_h)
     end
