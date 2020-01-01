@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'bundler', '~> 1.11'
-  s.add_development_dependency 'rake', '>= 10'
-  s.add_development_dependency 'minitest', '~> 5.5'
-  s.add_development_dependency 'pry', '~> 0.10'
+  s.add_development_dependency 'bundler', '~> 2.1'
+  s.add_development_dependency 'rake', '>= 13'
+  s.add_development_dependency 'minitest', '~> 5.13'
+  s.add_development_dependency 'pry', '~> 0.12'
 end
