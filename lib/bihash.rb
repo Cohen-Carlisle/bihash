@@ -339,10 +339,7 @@ class Bihash
     @default, @default_proc = args[0], block
   end
 
-  def initialize_copy(source)
-    super
-    @forward, @reverse = @forward.dup, @reverse.dup
-  end
+  alias :initialize_copy :replace
 
   def merged_hash_attrs
     @reverse.merge(@forward)

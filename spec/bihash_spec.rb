@@ -319,6 +319,18 @@ describe Bihash do
       clone[2] = :two
       _(bh[2]).must_be_nil
     end
+
+    it 'should copy the default value' do
+      bh = Bihash.new(404)
+      clone = bh.clone
+      _(clone.default).must_equal 404
+    end
+
+    it 'should copy the default proc' do
+      bh = Bihash.new { |_,k| k.to_s }
+      clone = bh.clone
+      _(clone.default(:not_a_key)).must_equal 'not_a_key'
+    end
   end
 
   describe '#compare_by_identity' do
@@ -514,6 +526,18 @@ describe Bihash do
       dup = bh.dup
       dup[2] = :two
       _(bh[2]).must_be_nil
+    end
+
+    it 'should copy the default value' do
+      bh = Bihash.new(404)
+      dup = bh.dup
+      _(dup.default).must_equal 404
+    end
+
+    it 'should copy the default proc' do
+      bh = Bihash.new { |_,k| k.to_s }
+      dup = bh.dup
+      _(dup.default(:not_a_key)).must_equal 'not_a_key'
     end
   end
 
