@@ -5,6 +5,17 @@ describe Bihash do
     _(Bihash).must_include Enumerable
   end
 
+  Bihash::UNIMPLEMENTED_CLASS_METHODS.each do |method|
+    it "should report that it does not respond to ::#{method}" do
+      _(Bihash.respond_to?(method)).must_equal false
+    end
+
+    it "should raise NoMethodError if ::#{method} is called" do
+      error = _(-> { Bihash.send(method) }).must_raise NoMethodError
+      _(error.message).must_equal "Bihash::#{method} not implemented"
+    end
+  end
+
   Bihash::UNIMPLEMENTED_METHODS.each do |method|
     it "should report that it does not respond to ##{method}" do
       _(Bihash.new.respond_to?(method)).must_equal false
