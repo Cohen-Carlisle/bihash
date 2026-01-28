@@ -36,7 +36,7 @@ class Bihash
     # meaningless on bihash as both sides already hashed
     'invert',
     # mass removal of nil, but a bihash can have only one pair containing nil
-    'compact',
+    'compact', # TODO: allow from Enumerable in Ruby 3.1
     'compact!'
   ]
 
