@@ -110,6 +110,10 @@ class Bihash
     @default_proc = arg
   end
 
+  def deconstruct_keys(_keys)
+    merged_hash_attrs
+  end
+
   def delete(key)
     raise_error_if_frozen
     if @forward.key?(key)

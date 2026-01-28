@@ -356,6 +356,16 @@ describe Bihash do
     end
   end
 
+  describe '#deconstruct_keys' do
+    it 'should enable pattern matching in the forward and reverse direction' do
+      bh = Bihash[left: :right]
+      bh in {left:}
+      _(left).must_equal :right
+      bh in {right:}
+      _(right).must_equal :left
+    end
+  end
+
   describe '#default' do
     it 'should not accept more than one argument' do
       _(-> { Bihash.new.default(1,2) }).must_raise ArgumentError
