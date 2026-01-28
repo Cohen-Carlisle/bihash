@@ -781,6 +781,20 @@ describe Bihash do
       _(receiver).must_equal Bihash[:key => 'value']
     end
 
+    it 'should copy the default value' do
+      receiver = Bihash[]
+      arg = Bihash.new(404)
+      receiver.replace(arg)
+      _(receiver.default).must_equal 404
+    end
+
+    it 'should copy the default proc' do
+      receiver = Bihash[]
+      arg = Bihash.new { |_, key| key.to_s }
+      receiver.replace(arg)
+      _(receiver.default(:not_a_key)).must_equal 'not_a_key'
+    end
+
     it 'should raise TypeError if arg is not a bihash' do
       _(-> { Bihash.new.replace({:key => 'value'}) }).must_raise TypeError
     end

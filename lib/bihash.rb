@@ -254,8 +254,10 @@ class Bihash
   def replace(other_bh)
     raise_error_if_frozen
     raise_error_unless_bihash(other_bh)
-    @forward.replace(other_bh.instance_variable_get(:@forward))
-    @reverse.replace(other_bh.instance_variable_get(:@reverse))
+    @forward = other_bh.instance_variable_get(:@forward).dup
+    @reverse = other_bh.instance_variable_get(:@reverse).dup
+    @default = other_bh.default
+    @default_proc = other_bh.default_proc
     self
   end
 
