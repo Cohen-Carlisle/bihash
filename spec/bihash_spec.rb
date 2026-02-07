@@ -633,16 +633,20 @@ describe Bihash do
       _(Bihash[1 => :one, 2 => :two].fetch_values(1, :two)).must_equal [:one, 2]
     end
 
-    it 'should raise a KeyError if any key is not found' do
-      _(-> { Bihash.new.fetch_values(404) }).must_raise KeyError
-    end
-
     it 'should not duplicate entries if a key equals its value' do
       _(Bihash[:key => :key].fetch_values(:key)).must_equal [:key]
     end
 
     it 'should return an empty array with no args' do
       _(Bihash[:key => 'value'].fetch_values).must_equal []
+    end
+
+    it 'should raise a KeyError if any key is not found without a block' do
+      _(-> { Bihash.new.fetch_values(404) }).must_raise KeyError
+    end
+
+    it 'should yield missing keys to the block if one is given' do
+      _(Bihash[1 => :one, 2 => :two].fetch_values(1, :two, 'three') { |k| "#{k} is missing"}).must_equal [:one, 2, 'three is missing']
     end
   end
 
@@ -709,7 +713,7 @@ describe Bihash do
   end
 
   describe '#merge' do
-    it 'should merge bihashes, assigning each arg pair to a copy of reciever' do
+    it 'should merge bihashes, assigning each arg pair to a copy of receiver' do
       receiver = Bihash[:chips => :salsa, :milk => :cookies, :fish => :rice]
       original_receiver = receiver.dup
       argument = Bihash[:fish => :chips, :soup => :salad]
@@ -718,8 +722,28 @@ describe Bihash do
       _(receiver).must_equal original_receiver
     end
 
-    it 'should raise TypeError if arg is not a bihash' do
-      _(-> { Bihash.new.merge({:key => 'value'}) }).must_raise TypeError
+    it 'should accept multiple bihashes' do
+      receiver = Bihash[receiver: true]
+      original_receiver = receiver.dup
+      arg1 = Bihash[one: 1]
+      arg2 = Bihash[two: 2]
+      return_value = Bihash[receiver: true, one: 1, two: 2]
+      _(receiver.merge(arg1, arg2)).must_equal return_value
+      _(receiver).must_equal original_receiver
+    end
+
+    it 'should merge later bihashes over earlier ones' do
+      receiver = Bihash[a: 1]
+      original_receiver = receiver.dup
+      arg1 = Bihash[a: 2]
+      arg2 = Bihash[a: 3]
+      return_value = Bihash[a: 3]
+      _(receiver.merge(arg1, arg2)).must_equal return_value
+      _(receiver).must_equal original_receiver
+    end
+
+    it 'should raise TypeError if any arg is not a bihash' do
+      _(-> { Bihash.new.merge(Bihash[one: 1], Hash[two: 2]) }).must_raise TypeError
     end
   end
 
@@ -732,12 +756,30 @@ describe Bihash do
       _(receiver).must_equal return_value
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.merge!(Bihash.new) }).must_raise RuntimeError
+    it 'should accept multiple bihashes' do
+      receiver = Bihash[receiver: true]
+      arg1 = Bihash[one: 1]
+      arg2 = Bihash[two: 2]
+      return_value = Bihash[receiver: true, one: 1, two: 2]
+      _(receiver.merge!(arg1, arg2)).must_equal return_value
+      _(receiver).must_equal return_value
     end
 
-    it 'should raise TypeError if arg is not a bihash' do
-      _(-> { Bihash.new.merge!({:key => 'value'}) }).must_raise TypeError
+    it 'should merge later bihashes over earlier ones' do
+      receiver = Bihash[a: 1]
+      arg1 = Bihash[a: 2]
+      arg2 = Bihash[a: 3]
+      return_value = Bihash[a: 3]
+      _(receiver.merge!(arg1, arg2)).must_equal return_value
+      _(receiver).must_equal return_value
+    end
+
+    it 'should raise TypeError if any arg is not a bihash' do
+      _(-> { Bihash.new.merge!(Bihash[one: 1], Hash[two: 2]) }).must_raise TypeError
+    end
+
+    it 'should raise RuntimeError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.merge!(Bihash.new) }).must_raise RuntimeError
     end
 
     it 'should be aliased to #update' do
@@ -946,7 +988,7 @@ describe Bihash do
   end
 
   describe '#to_h' do
-    it 'should return a copy of the forward hash' do
+    it 'without a block, should return a copy of the forward hash' do
       bh = Bihash[:key1 => 'val1', :key2 => 'val2']
       h = bh.to_h
       _(h).must_equal Hash[:key1 => 'val1', :key2 => 'val2']
@@ -954,9 +996,21 @@ describe Bihash do
       _(bh).must_include :key1
     end
 
-    it 'should be aliased to #to_hash' do
-      bh = Bihash.new
-      _(bh.method(:to_hash)).must_equal bh.method(:to_h)
+    it 'with a block, should transform pairs from the forward hash' do
+      bh = Bihash[:key1 => 'val1', :key2 => 'val2']
+      h = bh.to_h { |k,v| [k.to_s, v.to_sym] }
+      _(h).must_equal Hash['key1' => :val1, 'key2' => :val2]
+      _(bh).must_equal Bihash[:key1 => 'val1', :key2 => 'val2']
+    end
+  end
+
+  describe '#to_hash' do
+    it 'should return a copy of the forward hash' do
+      bh = Bihash[:key1 => 'val1', :key2 => 'val2']
+      h = bh.to_hash
+      _(h).must_equal Hash[:key1 => 'val1', :key2 => 'val2']
+      h.delete(:key1)
+      _(bh).must_include :key1
     end
   end
 
