@@ -1026,8 +1026,10 @@ describe Bihash do
 
   describe '#to_s' do
     it 'should return a nice string representing the bihash' do
-      bh = Bihash[:k1 => 'v1', :k2 => [:v2], :k3 => {:k4 => 'v4'}]
-      _(bh.to_s).must_equal 'Bihash[:k1=>"v1", :k2=>[:v2], :k3=>{:k4=>"v4"}]'
+      h = {:k1 => 'v1', :k2 => [:v2], :k3 => {:k4 => 'v4'}}
+      bh = Bihash[h]
+      keys_and_values_to_s = h.to_s.delete_prefix('{').delete_suffix('}')
+      _(bh.to_s).must_equal "Bihash[#{keys_and_values_to_s}]"
     end
 
     it 'should be aliased to #inspect' do
