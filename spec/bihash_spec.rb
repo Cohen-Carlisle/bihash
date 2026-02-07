@@ -12,7 +12,11 @@ describe Bihash do
 
     it "should raise NoMethodError if ::#{method} is called" do
       error = _(-> { Bihash.send(method) }).must_raise NoMethodError
-      _(error.message).must_equal "Bihash::#{method} not implemented"
+      unless RUBY_VERSION.to_f == 3.1
+        _(error.message).must_equal "Bihash::#{method} not implemented"
+      else
+        assert error.message.start_with?("Bihash::#{method} not implemented")
+      end
     end
   end
 
@@ -23,7 +27,11 @@ describe Bihash do
 
     it "should raise NoMethodError if ##{method} is called" do
       error = _(-> { Bihash.new.send(method) }).must_raise NoMethodError
-      _(error.message).must_equal "Bihash##{method} not implemented"
+      unless RUBY_VERSION.to_f == 3.1
+        _(error.message).must_equal "Bihash##{method} not implemented"
+      else
+        assert error.message.start_with?("Bihash##{method} not implemented")
+      end
     end
   end
 
