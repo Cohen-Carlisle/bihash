@@ -92,21 +92,21 @@ describe Bihash do
     end
 
     it 'should create an empty bihash with a default if given an object arg' do
-      bh = Bihash.new('default')
+      bh = Bihash.new(['default'])
       _(bh).must_be_instance_of Bihash
       _(bh).must_be_empty
-      _(bh[:not_a_key]).must_equal 'default'
-      bh[:not_a_key].tr!('ealt', '3417')
-      _(bh[:still_not_a_key]).must_equal 'd3f4u17'
+      _(bh[:not_a_key]).must_equal ['default']
+      bh[:not_a_key] << 'pwned'
+      _(bh[:still_not_a_key]).must_equal ['default', 'pwned']
     end
 
     it 'should create an empty bihash with a default if given a block arg' do
-      bh = Bihash.new { 'd3f4u17' }
+      bh = Bihash.new { ['default'] }
       _(bh).must_be_instance_of Bihash
       _(bh).must_be_empty
-      _(bh[:not_a_key]).must_equal 'd3f4u17'
-      bh[:not_a_key].tr!('3417', 'ealt')
-      _(bh[:not_a_key]).must_equal 'd3f4u17'
+      _(bh[:not_a_key]).must_equal ['default']
+      bh[:not_a_key] << '(not) pwned'
+      _(bh[:not_a_key]).must_equal ['default']
     end
 
     it 'should allow assignment of new pairs if given a block arg' do
