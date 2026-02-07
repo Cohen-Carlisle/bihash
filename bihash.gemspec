@@ -1,5 +1,4 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'bihash/version'
 
@@ -10,15 +9,16 @@ Gem::Specification.new do |s|
   s.email         = ['cohen.carlisle@gmail.com']
 
   s.summary       = 'Bidirectional Hash'
-  s.description   = 'A simple gem that implements a bidrectional hash'
-  s.homepage      = 'http://rubygems.org/gems/bihash'
+  s.description   = 'A simple gem that implements a bidirectional hash'
+  s.homepage      = 'https://github.com/Cohen-Carlisle/bihash'
   s.license       = 'MIT'
 
   s.files         = `git ls-files`.split("\n")
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'bundler', '~> 2.1'
-  s.add_development_dependency 'rake', '>= 13'
-  s.add_development_dependency 'minitest', '~> 5.13'
-  s.add_development_dependency 'pry', '~> 0.12'
+  s.required_ruby_version = '>= 2.7.0'
+
+  s.add_development_dependency 'rake', '~> 13.1'
+  s.add_development_dependency 'minitest', '~> 5.20'
+  s.add_development_dependency 'irb', '~> 1.13'
 end
