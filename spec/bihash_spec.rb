@@ -350,6 +350,10 @@ describe Bihash do
       clone = bh.clone
       _(clone.default(:not_a_key)).must_equal 'not_a_key'
     end
+
+    it 'should copy the frozen state' do
+      _(Bihash.new.freeze.clone.frozen?).must_equal true
+    end
   end
 
   describe '#compare_by_identity' do
@@ -567,6 +571,10 @@ describe Bihash do
       bh = Bihash.new { |_,k| k.to_s }
       dup = bh.dup
       _(dup.default(:not_a_key)).must_equal 'not_a_key'
+    end
+
+    it 'should not copy the frozen state' do
+      _(Bihash.new.freeze.dup.frozen?).must_equal false
     end
   end
 
