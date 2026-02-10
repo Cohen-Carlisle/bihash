@@ -110,6 +110,10 @@ class Bihash
     @default_proc = arg
   end
 
+  def deconstruct_keys(_keys)
+    merged_hash_attrs
+  end
+
   def delete(key)
     raise_error_if_frozen
     if @forward.key?(key)
@@ -156,8 +160,8 @@ class Bihash
     (@forward.key?(key) ? @forward : @reverse).fetch(key, *default, &block)
   end
 
-  def fetch_values(*keys)
-    keys.map { |key| fetch(key) }
+  def fetch_values(*keys, &block)
+    keys.map { |key| fetch(key, &block) }
   end
 
   def filter(&block)
@@ -211,14 +215,16 @@ class Bihash
 
   alias :member? :has_key?
 
-  def merge(other_bh)
-    dup.merge!(other_bh)
+  def merge(*other_bhs)
+    dup.merge!(*other_bhs)
   end
 
-  def merge!(other_bh)
+  def merge!(*other_bhs)
     raise_error_if_frozen
-    raise_error_unless_bihash(other_bh)
-    other_bh.each { |k,v| store(k,v) }
+    other_bhs.each do |other_bh|
+      raise_error_unless_bihash(other_bh)
+      other_bh.each { |k,v| store(k,v) }
+    end
     self
   end
 
@@ -254,8 +260,10 @@ class Bihash
   def replace(other_bh)
     raise_error_if_frozen
     raise_error_unless_bihash(other_bh)
-    @forward.replace(other_bh.instance_variable_get(:@forward))
-    @reverse.replace(other_bh.instance_variable_get(:@reverse))
+    @forward = other_bh.instance_variable_get(:@forward).dup
+    @reverse = other_bh.instance_variable_get(:@reverse).dup
+    @default = other_bh.default
+    @default_proc = other_bh.default_proc
     self
   end
 
@@ -266,6 +274,7 @@ class Bihash
   def shift
     raise_error_if_frozen
     if empty?
+      # TODO: return nil instead in 3.2
       default_value(nil)
     else
       @reverse.shift
@@ -286,10 +295,16 @@ class Bihash
   alias :store :[]=
 
   def to_h
-    @forward.dup
+    if block_given?
+      @forward.to_h { |k,v| yield(k,v) }
+    else
+      @forward.dup
+    end
   end
 
-  alias :to_hash :to_h
+  def to_hash
+    to_h
+  end
 
   def to_proc
     method(:[]).to_proc
@@ -337,10 +352,7 @@ class Bihash
     @default, @default_proc = args[0], block
   end
 
-  def initialize_copy(source)
-    super
-    @forward, @reverse = @forward.dup, @reverse.dup
-  end
+  alias :initialize_copy :replace
 
   def merged_hash_attrs
     @reverse.merge(@forward)

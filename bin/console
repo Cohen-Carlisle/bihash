@@ -2,5 +2,5 @@
 require 'bundler/setup'
 require 'bihash'
 
-require 'pry'
-Pry.start
+require 'irb'
+IRB.start
