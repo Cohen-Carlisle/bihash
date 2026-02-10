@@ -296,13 +296,8 @@ class Bihash
 
   def shift
     raise_error_if_frozen
-    if empty?
-      # TODO: return nil instead in 3.2
-      default_value(nil)
-    else
-      @reverse.shift
-      @forward.shift
-    end
+    @reverse.shift
+    @forward.shift
   end
 
   def_delegator :@forward, :size
