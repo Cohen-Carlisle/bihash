@@ -156,6 +156,15 @@ class Bihash
 
   alias :eql? :==
 
+  def except(*args)
+    dup.tap do |bh|
+      bh.default = nil
+      args.each do |arg|
+        bh.delete(arg)
+      end
+    end
+  end
+
   def fetch(key, *default, &block)
     (@forward.key?(key) ? @forward : @reverse).fetch(key, *default, &block)
   end
@@ -220,6 +229,8 @@ class Bihash
   end
 
   def merge!(*other_bhs)
+    # NOTE: merge/merge!/update intentionally do not implement block support yet.
+    #       see https://github.com/Cohen-Carlisle/bihash/issues/17
     raise_error_if_frozen
     other_bhs.each do |other_bh|
       raise_error_unless_bihash(other_bh)

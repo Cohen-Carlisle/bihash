@@ -610,6 +610,19 @@ describe Bihash do
     end
   end
 
+  describe '#except' do
+    it 'should return a new bihash without the pairs that are in the args' do
+      bh = Bihash[1 => :one, 2 => :two, 3 => :three]
+      _(bh.except(1, :two, "nope")).must_equal Bihash[3 => :three]
+      _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
+    end
+
+    it 'should return a vanilla bihash without defaults' do
+      excepted_bh = Bihash.new(404).except
+      _(excepted_bh[:not_a_key]).must_be_nil
+    end
+  end
+
   describe '#fetch' do
     it 'should return the other pair' do
       bh = Bihash[:key => 'value']
@@ -999,7 +1012,7 @@ describe Bihash do
 
     it 'should return a vanilla bihash without default values, etc.' do
       sliced_bh = Bihash.new(404).slice
-      _(sliced_bh.default).must_be_nil
+      _(sliced_bh[:not_a_key]).must_be_nil
     end
   end
 
