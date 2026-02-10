@@ -34,10 +34,7 @@ class Bihash
     'value?',
     'has_value?',
     # meaningless on bihash as both sides already hashed
-    'invert',
-    # mass removal of nil, but a bihash can have only one pair containing nil
-    'compact', # TODO: allow from Enumerable in Ruby 3.1
-    'compact!'
+    'invert'
   ]
 
   def respond_to?(method, private = false)

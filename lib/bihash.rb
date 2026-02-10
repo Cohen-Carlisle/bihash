@@ -11,8 +11,12 @@ class Bihash
   end
 
   def self.try_convert(arg)
-    h = Hash.try_convert(arg)
-    h && new_from_hash(h)
+    if arg.is_a?(self)
+      arg
+    else
+      h = Hash.try_convert(arg)
+      h && new_from_hash(h.dup)
+    end
   end
 
   def <(rhs)
@@ -66,6 +70,14 @@ class Bihash
     @forward.clear
     @reverse.clear
     self
+  end
+
+  def compact
+    dup.tap { |d| d.compact! }
+  end
+
+  def compact!
+    reject! { |k1, k2| k1.nil? || k2.nil? }
   end
 
   def compare_by_identity
@@ -370,7 +382,7 @@ class Bihash
   end
 
   def raise_error_if_frozen
-    raise "can't modify frozen Bihash" if frozen?
+    raise FrozenError, "can't modify frozen Bihash" if frozen?
   end
 
   def raise_error_unless_bihash(obj)
