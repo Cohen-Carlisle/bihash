@@ -378,7 +378,7 @@ class Bihash
   end
 
   def raise_error_if_frozen
-    raise "can't modify frozen Bihash" if frozen?
+    raise FrozenError, "can't modify frozen Bihash" if frozen?
   end
 
   def raise_error_unless_bihash(obj)

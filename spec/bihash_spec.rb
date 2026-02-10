@@ -294,8 +294,8 @@ describe Bihash do
       _(bh['value']).must_equal :key
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze[:key] = 'value' }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze[:key] = 'value' }).must_raise FrozenError
     end
   end
 
@@ -357,8 +357,8 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.compact! }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.compact! }).must_raise FrozenError
     end
   end
 
@@ -369,8 +369,8 @@ describe Bihash do
       _(bh).must_be_empty
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.clear }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.clear }).must_raise FrozenError
     end
   end
 
@@ -410,8 +410,8 @@ describe Bihash do
       _(bh[key2]).must_equal 'key'
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.compare_by_identity }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.compare_by_identity }).must_raise FrozenError
     end
   end
 
@@ -478,8 +478,8 @@ describe Bihash do
       _(bh[:not_a_key]).must_equal 404
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.default = 404 }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.default = 404 }).must_raise FrozenError
     end
   end
 
@@ -521,8 +521,8 @@ describe Bihash do
       _(-> { Bihash.new.default_proc = -> { '404' } }).must_raise TypeError
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash[].freeze.default_proc = proc { '' } }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash[].freeze.default_proc = proc { '' } }).must_raise FrozenError
     end
   end
 
@@ -549,8 +549,8 @@ describe Bihash do
       _(out).must_equal '404 not found'
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.delete(:key) }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.delete(:key) }).must_raise FrozenError
     end
   end
 
@@ -562,8 +562,8 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 3 => :three]
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash with a block' do
-      _(-> { Bihash.new.freeze.delete_if { false } }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash with a block' do
+      _(-> { Bihash.new.freeze.delete_if { false } }).must_raise FrozenError
     end
 
     it 'should return an enumerator if not given a block' do
@@ -767,8 +767,8 @@ describe Bihash do
       _(bh).must_equal Bihash[2 => :two, 4 => :four]
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash with a block' do
-      _(-> { Bihash.new.freeze.keep_if { true } }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash with a block' do
+      _(-> { Bihash.new.freeze.keep_if { true } }).must_raise FrozenError
     end
 
     it 'should return an enumerator if not given a block' do
@@ -850,8 +850,8 @@ describe Bihash do
       _(-> { Bihash.new.merge!(Bihash[one: 1], Hash[two: 2]) }).must_raise TypeError
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.merge!(Bihash.new) }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.merge!(Bihash.new) }).must_raise FrozenError
     end
 
     it 'should be aliased to #update' do
@@ -869,8 +869,8 @@ describe Bihash do
       _(bh[[1]]).must_equal :array
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.rehash }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.rehash }).must_raise FrozenError
     end
 
     it 'should raise RuntimeError if called when key duplicated outside pair' do
@@ -918,8 +918,8 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash with a block' do
-      _(-> { Bihash.new.freeze.reject! { false } }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash with a block' do
+      _(-> { Bihash.new.freeze.reject! { false } }).must_raise FrozenError
     end
 
     it 'should return an enumerator if not given a block' do
@@ -958,8 +958,8 @@ describe Bihash do
       _(-> { Bihash.new.replace({:key => 'value'}) }).must_raise TypeError
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.replace(Bihash[:k, 'v']) }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.replace(Bihash[:k, 'v']) }).must_raise FrozenError
     end
   end
 
@@ -1006,8 +1006,8 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four]
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash with a block' do
-      _(-> { Bihash.new.freeze.select! { true } }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash with a block' do
+      _(-> { Bihash.new.freeze.select! { true } }).must_raise FrozenError
     end
 
     it 'should return an enumerator if not given a block' do
@@ -1035,8 +1035,8 @@ describe Bihash do
       _(Bihash.new { 'd3f4u17' }.shift).must_equal 'd3f4u17'
     end
 
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.shift }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.shift }).must_raise FrozenError
     end
   end
 
@@ -1135,8 +1135,8 @@ describe Bihash do
   end
 
   describe '#initialize' do
-    it 'should raise RuntimeError if called on a frozen bihash' do
-      _(-> { Bihash.new.freeze.send(:initialize) }).must_raise RuntimeError
+    it 'should raise FrozenError if called on a frozen bihash' do
+      _(-> { Bihash.new.freeze.send(:initialize) }).must_raise FrozenError
     end
   end
 end
