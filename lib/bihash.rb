@@ -229,6 +229,8 @@ class Bihash
   end
 
   def merge!(*other_bhs)
+    # NOTE: merge/merge!/update intentionally do not implement block support yet.
+    #       see https://github.com/Cohen-Carlisle/bihash/issues/17
     raise_error_if_frozen
     other_bhs.each do |other_bh|
       raise_error_unless_bihash(other_bh)
