@@ -11,8 +11,12 @@ class Bihash
   end
 
   def self.try_convert(arg)
-    h = Hash.try_convert(arg)
-    h && new_from_hash(h)
+    if arg.is_a?(self)
+      arg
+    else
+      h = Hash.try_convert(arg)
+      h && new_from_hash(h.dup)
+    end
   end
 
   def <(rhs)

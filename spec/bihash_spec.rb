@@ -131,6 +131,12 @@ describe Bihash do
   end
 
   describe '::try_convert' do
+    it 'should return the bihash if given a bihash' do
+      original_bh = Bihash[:key => 'value']
+      returned_bh = Bihash.try_convert(original_bh)
+      _(original_bh.object_id).must_equal returned_bh.object_id
+    end
+
     it 'should convert an object to a bihash if it responds to #to_hash' do
       hash = {:k1 => 1, :k2 => 2}
       bh = Bihash.try_convert(hash)
@@ -141,13 +147,17 @@ describe Bihash do
       _(bh[2]).must_equal :k2
     end
 
-    it 'should convert a bihash to a bihash' do
-      bh = Bihash[:key => 'value']
-      _(Bihash.try_convert(bh)).must_equal bh
-    end
-
     it 'should return nil if the object does not respond to #to_hash' do
       _(Bihash.try_convert(Object.new)).must_be_nil
+    end
+
+    it 'should protect against mutations the original object' do
+      hash = {:k1 => 1, :k2 => 2}
+      bh = Bihash.try_convert(hash)
+      hash[:k3] = 3
+      _(bh).must_equal Bihash[:k1 => 1, :k2 => 2]
+      _(bh.include?(:k3)).must_equal false
+      _(bh.include?(3)).must_equal false
     end
 
     it 'should not accept a hash with duplicate values' do
