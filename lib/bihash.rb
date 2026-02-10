@@ -156,6 +156,15 @@ class Bihash
 
   alias :eql? :==
 
+  def except(*args)
+    dup.tap do |bh|
+      bh.default = nil
+      args.each do |arg|
+        bh.delete(arg)
+      end
+    end
+  end
+
   def fetch(key, *default, &block)
     (@forward.key?(key) ? @forward : @reverse).fetch(key, *default, &block)
   end
