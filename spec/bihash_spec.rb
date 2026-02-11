@@ -196,12 +196,18 @@ describe Bihash do
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[2 => :k2, 1 => :k1]
-      _((bh1 == bh2)).must_equal true
+      _(bh1 == bh2).must_equal true
     end
 
     it 'should return false when two bihashes do not have the same pairs' do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 99]
-      _((bh1 == bh2)).must_equal false
+      _(bh1 == bh2).must_equal false
+    end
+
+    it 'should compare pairs using #eql? (since all values are also keys)' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 == bh2).must_equal false
     end
 
     it 'should be aliased to #eql?' do
