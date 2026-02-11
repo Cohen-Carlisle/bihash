@@ -1,5 +1,3 @@
-require 'set'
-
 class Bihash
   UNIMPLEMENTED_CLASS_METHODS = Set[
     # a bihash is not converted to keyword args like Hash instances can be
@@ -29,7 +27,6 @@ class Bihash
     'transform_values!',
     # O(n) reverse lookups
     'key',
-    'index',
     'rassoc',
     'value?',
     'has_value?',
