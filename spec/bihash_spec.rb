@@ -1061,9 +1061,18 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
     end
 
-    it 'should return a vanilla bihash without default values, etc.' do
-      sliced_bh = Bihash.new(404).slice
-      _(sliced_bh[:not_a_key]).must_be_nil
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.slice.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.slice.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.slice.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.slice.compare_by_identity?).must_equal true
     end
   end
 

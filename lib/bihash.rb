@@ -304,6 +304,7 @@ class Bihash
 
   def slice(*args)
     self.class.new.tap do |bh|
+      bh.compare_by_identity if self.compare_by_identity?
       args.each do |arg|
         bh[arg] = self[arg] if key?(arg)
       end
