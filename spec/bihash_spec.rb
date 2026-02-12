@@ -163,15 +163,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict subset of self' do
-      _((Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3])).must_equal true
+      _(Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
     it 'should return false when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2]).must_equal false
     end
 
     it 'should return false when the argument is not a subset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2]).must_equal false
     end
   end
 
@@ -181,15 +181,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict subset of self' do
-      _((Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3])).must_equal true
+      _(Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
     it 'should return true when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is not a subset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2]).must_equal false
     end
   end
 
@@ -222,15 +222,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict superset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2]).must_equal false
     end
 
     it 'should return false when the argument is not a superset of self' do
-      _((Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3])).must_equal false
+      _(Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
 
@@ -240,15 +240,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict superset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return true when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is not a superset of self' do
-      _((Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3])).must_equal false
+      _(Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
 
@@ -482,7 +482,7 @@ describe Bihash do
     it 'should set the default object' do
       bh = Bihash.new { 'proc called' }
       _(bh[:not_a_key]).must_equal 'proc called'
-      _((bh.default = 404)).must_equal 404
+      _(bh.default = 404).must_equal 404
       _(bh[:not_a_key]).must_equal 404
     end
 
@@ -510,14 +510,14 @@ describe Bihash do
     it 'should set the default proc' do
       bh = Bihash.new(:default_object)
       _(bh[:not_a_key]).must_equal :default_object
-      _((bh.default_proc = ->(bihash, key) { '404' })).must_be_instance_of Proc
+      _(bh.default_proc = ->(bihash, key) { '404' }).must_be_instance_of Proc
       _(bh[:not_a_key]).must_equal '404'
     end
 
     it 'should set the default value to nil if argument is nil' do
       bh = Bihash.new(:default_object)
       _(bh[:not_a_key]).must_equal :default_object
-      _((bh.default_proc = nil)).must_be_nil
+      _(bh.default_proc = nil).must_be_nil
       _(bh[:not_a_key]).must_be_nil
     end
 
