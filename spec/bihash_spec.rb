@@ -344,6 +344,20 @@ describe Bihash do
         _(compacted_bh.object_id).wont_equal bh.object_id
       end
     end
+
+    it 'should return a new bihash with defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.compact.default).must_equal 404
+      bh_default_proc = Bihash.new { "hello #{_2}" }
+      _(bh_default_proc.compact.default(:world)).must_equal "hello world"
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.compact.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.compact.compare_by_identity?).must_equal true
+    end
   end
 
   describe '#compact!' do
@@ -400,6 +414,13 @@ describe Bihash do
       bh = Bihash.new { |_,k| k.to_s }
       clone = bh.clone
       _(clone.default(:not_a_key)).must_equal 'not_a_key'
+    end
+
+    it 'should copy compare_by_identity' do
+      bh = Bihash[]
+      _(bh.clone.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.clone.compare_by_identity?).must_equal true
     end
 
     it 'should copy the frozen state' do
@@ -624,6 +645,13 @@ describe Bihash do
       _(dup.default(:not_a_key)).must_equal 'not_a_key'
     end
 
+    it 'should copy compare_by_identity' do
+      bh = Bihash[]
+      _(bh.dup.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.dup.compare_by_identity?).must_equal true
+    end
+
     it 'should not copy the frozen state' do
       _(Bihash.new.freeze.dup.frozen?).must_equal false
     end
@@ -668,9 +696,18 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
     end
 
-    it 'should return a vanilla bihash without defaults' do
-      excepted_bh = Bihash.new(404).except
-      _(excepted_bh[:not_a_key]).must_be_nil
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.except.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.except.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.except.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.except.compare_by_identity?).must_equal true
     end
   end
 
@@ -822,6 +859,20 @@ describe Bihash do
       _(receiver).must_equal original_receiver
     end
 
+    it 'should return a new bihash with defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.merge.default).must_equal 404
+      bh_default_proc = Bihash.new { "hello #{_2}" }
+      _(bh_default_proc.merge.default(:world)).must_equal "hello world"
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.merge.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.merge.compare_by_identity?).must_equal true
+    end
+
     it 'should raise TypeError if any arg is not a bihash' do
       _(-> { Bihash.new.merge(Bihash[one: 1], Hash[two: 2]) }).must_raise TypeError
     end
@@ -910,6 +961,20 @@ describe Bihash do
       _(enum).must_be_instance_of Enumerator
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[1 => :one, 3 => :three]
     end
+
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.reject { false }.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.reject { false }.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.reject { false }.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.reject { false }.compare_by_identity?).must_equal true
+    end
   end
 
   describe '#reject!' do
@@ -992,6 +1057,20 @@ describe Bihash do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select
       _(enum).must_be_instance_of Enumerator
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[2 => :two, 4 => :four]
+    end
+
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.select { true }.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.select { true }.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.select { true }.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.select { true }.compare_by_identity?).must_equal true
     end
 
     it 'should be aliased to #filter' do

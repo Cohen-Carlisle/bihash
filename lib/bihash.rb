@@ -169,8 +169,7 @@ class Bihash
   alias :eql? :==
 
   def except(*args)
-    dup.tap do |bh|
-      bh.default = nil
+    dup_without_defaults.tap do |bh|
       args.each do |arg|
         bh.delete(arg)
       end
@@ -187,7 +186,7 @@ class Bihash
 
   def filter(&block)
     if block_given?
-      dup.tap { |d| d.select!(&block) }
+      dup_without_defaults.tap { |d| d.select!(&block) }
     else
       to_enum(:select)
     end
@@ -263,7 +262,7 @@ class Bihash
 
   def reject(&block)
     if block_given?
-      dup.tap { |d| d.reject!(&block) }
+      dup_without_defaults.tap { |d| d.reject!(&block) }
     else
       to_enum(:reject)
     end
@@ -352,6 +351,10 @@ class Bihash
 
   def default_value(key)
     @default_proc ? @default_proc.call(self, key) : @default
+  end
+
+  def dup_without_defaults
+    dup.tap { |bh| bh.default = nil }
   end
 
   def illegal_state?
