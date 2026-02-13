@@ -358,8 +358,8 @@ class Bihash
   end
 
   def illegal_state?
-    fw = @forward
-    (fw.keys | fw.values).size + fw.select { |k,v| k == v }.size < fw.size * 2
+    f = @forward
+    (f.keys | f.values).size + f.select { |k,v| k.eql?(v) }.size < f.size * 2
   end
 
   def initialize(*args, &block)
