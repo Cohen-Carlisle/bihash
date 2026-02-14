@@ -358,8 +358,14 @@ class Bihash
   end
 
   def illegal_state?
-    f = @forward
-    (f.keys | f.values).size + f.select { |k,v| k.eql?(v) }.size < f.size * 2
+    if compare_by_identity?
+      unique_members = (@forward.keys + @forward.values).uniq(&:object_id).count
+      duplicate_pairs = @forward.count { |k,v| k.equal?(v) }
+    else
+      unique_members = (@forward.keys | @forward.values).count
+      duplicate_pairs = @forward.count { |k,v| k.eql?(v) }
+    end
+    unique_members + duplicate_pairs < @forward.length * 2
   end
 
   def initialize(*args, &block)

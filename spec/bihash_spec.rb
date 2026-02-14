@@ -941,6 +941,26 @@ describe Bihash do
       (bh[[4]] << 1).shift
       _(-> { bh.rehash }).must_raise RuntimeError
     end
+
+    describe 'when #compare_by_identity is set' do
+      it 'should not raise when there are keys that are eql? but not equal?' do
+        bh = Bihash.new.compare_by_identity
+        foo1, foo2 = "foo", "foo"
+        bh[foo1] = 1
+        bh[foo2] = "foo"
+        bh.rehash
+      end
+
+      it 'should raise if called when key duplicated (equal?) outside pair' do
+        bh = Bihash.new
+        x, y = [:x], [:y]
+        bh[x] = y
+        x[0] = :y
+        bh[y] = :anything
+        bh.compare_by_identity
+        _(-> { bh.rehash }).must_raise RuntimeError
+      end
+    end
   end
 
   describe '#reject' do
