@@ -12,11 +12,7 @@ describe Bihash do
 
     it "should raise NoMethodError if ::#{method} is called" do
       error = _(-> { Bihash.send(method) }).must_raise NoMethodError
-      unless RUBY_VERSION.to_f == 3.1
-        _(error.message).must_equal "Bihash::#{method} not implemented"
-      else
-        assert error.message.start_with?("Bihash::#{method} not implemented")
-      end
+      _(error.message).must_equal "Bihash::#{method} not implemented"
     end
   end
 
@@ -27,11 +23,7 @@ describe Bihash do
 
     it "should raise NoMethodError if ##{method} is called" do
       error = _(-> { Bihash.new.send(method) }).must_raise NoMethodError
-      unless RUBY_VERSION.to_f == 3.1
-        _(error.message).must_equal "Bihash##{method} not implemented"
-      else
-        assert error.message.start_with?("Bihash##{method} not implemented")
-      end
+      _(error.message).must_equal "Bihash##{method} not implemented"
     end
   end
 
@@ -1039,10 +1031,10 @@ describe Bihash do
       _(bh).must_equal Bihash[2 => :two, 3 => :three]
     end
 
-    it 'should return the default value if bihash is empty' do
+    it 'should return nil if bihash is empty' do
       _(Bihash.new.shift).must_be_nil
-      _(Bihash.new(404).shift).must_equal 404
-      _(Bihash.new { 'd3f4u17' }.shift).must_equal 'd3f4u17'
+      _(Bihash.new(404).shift).must_be_nil
+      _(Bihash.new { 'd3f4u17' }.shift).must_be_nil
     end
 
     it 'should raise FrozenError if called on a frozen bihash' do
