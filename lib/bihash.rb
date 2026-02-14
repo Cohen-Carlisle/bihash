@@ -15,7 +15,7 @@ class Bihash
       arg
     else
       h = Hash.try_convert(arg)
-      h && new_from_hash(h.dup)
+      h && self[h]
     end
   end
 
