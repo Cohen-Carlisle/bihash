@@ -15,7 +15,7 @@ class Bihash
       arg
     else
       h = Hash.try_convert(arg)
-      h && new_from_hash(h.dup)
+      h && self[h]
     end
   end
 
@@ -339,6 +339,7 @@ class Bihash
   private
 
   def self.new_from_hash(h)
+    h = Hash[h.to_a] if h.compare_by_identity? && RUBY_VERSION.to_f < 3.3
     bihash = new
     bihash.instance_variable_set(:@reverse, h.invert)
     bihash.instance_variable_set(:@forward, h)

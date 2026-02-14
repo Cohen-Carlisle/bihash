@@ -41,6 +41,28 @@ describe Bihash do
       _(bh['value']).must_equal :key
     end
 
+    it 'should not carry over the default value' do
+      h = Hash.new(404)
+      bh = Bihash[h]
+      _(bh.default).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over the default_proc' do
+      h = Hash.new { "#{_2} not found" }
+      bh = Bihash[h]
+      _(bh.default_proc).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over compare_by_identity' do
+      h = Hash.new.compare_by_identity
+      h[Array.new] = :array
+      bh = Bihash[h]
+      _(bh.compare_by_identity?).must_equal false
+      _(bh[Array.new]).must_equal :array
+    end
+
     it 'should not accept a hash with duplicate values' do
       _(-> { Bihash[:k1 => 'val', :k2 => 'val'] }).must_raise ArgumentError
     end
@@ -154,6 +176,28 @@ describe Bihash do
       _(bh).must_equal Bihash[:k1 => 1, :k2 => 2]
       _(bh.include?(:k3)).must_equal false
       _(bh.include?(3)).must_equal false
+    end
+
+    it 'should not carry over the default value' do
+      h = Hash.new(404)
+      bh = Bihash.try_convert(h)
+      _(bh.default).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over the default_proc' do
+      h = Hash.new { "#{_2} not found" }
+      bh = Bihash.try_convert(h)
+      _(bh.default_proc).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over compare_by_identity' do
+      h = Hash.new.compare_by_identity
+      h[Array.new] = :array
+      bh = Bihash.try_convert(h)
+      _(bh.compare_by_identity?).must_equal false
+      _(bh[Array.new]).must_equal :array
     end
 
     it 'should not accept a hash with duplicate values' do
