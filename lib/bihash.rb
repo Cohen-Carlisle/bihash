@@ -82,6 +82,9 @@ class Bihash
 
   def compare_by_identity
     raise_error_if_frozen
+    if illegal_state?(compare_by_id: true)
+      raise 'Cannot set compare_by_identity while a key is duplicated outside its own pair'
+    end
     @forward.compare_by_identity
     @reverse.compare_by_identity
     self
@@ -240,7 +243,7 @@ class Bihash
   end
 
   def merge!(*other_bhs)
-    # NOTE: merge/merge!/update intentionally do not implement block support yet.
+    # NOTE: merge/merge!/update intentionally do not implement block support yet
     #       see https://github.com/Cohen-Carlisle/bihash/issues/17
     raise_error_if_frozen
     other_bhs.each do |other_bh|
@@ -358,8 +361,8 @@ class Bihash
     dup.tap { |bh| bh.default = nil }
   end
 
-  def illegal_state?
-    if compare_by_identity?
+  def illegal_state?(compare_by_id: compare_by_identity?)
+    if compare_by_id
       unique_members = (@forward.keys + @forward.values).uniq(&:object_id).count
       duplicate_pairs = @forward.count { |k,v| k.equal?(v) }
     else

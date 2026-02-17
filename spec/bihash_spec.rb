@@ -490,6 +490,14 @@ describe Bihash do
     it 'should raise FrozenError if called on a frozen bihash' do
       _(-> { Bihash.new.freeze.compare_by_identity }).must_raise FrozenError
     end
+
+    it 'should raise if called when key duplicated (equal?) outside pair' do
+      a, b, c, d = [:a], [:b], [:c], [:d]
+      bh = Bihash[a => b, c => d]
+      d.replace([:a])
+      bh[d] = :anything
+      _(-> { bh.compare_by_identity }).must_raise RuntimeError
+    end
   end
 
   describe '#compare_by_identity?' do
@@ -981,8 +989,9 @@ describe Bihash do
     end
 
     it 'should raise RuntimeError if called when key duplicated outside pair' do
-      bh = Bihash[[1], [2], [3], [4]]
-      (bh[[4]] << 1).shift
+      a, b, c, d = [:a], [:b], [:c], [:d]
+      bh = Bihash[a => b, c => d]
+      d.replace([:a])
       _(-> { bh.rehash }).must_raise RuntimeError
     end
 
@@ -993,16 +1002,6 @@ describe Bihash do
         bh[foo1] = 1
         bh[foo2] = "foo"
         bh.rehash
-      end
-
-      it 'should raise if called when key duplicated (equal?) outside pair' do
-        bh = Bihash.new
-        x, y = [:x], [:y]
-        bh[x] = y
-        x[0] = :y
-        bh[y] = :anything
-        bh.compare_by_identity
-        _(-> { bh.rehash }).must_raise RuntimeError
       end
     end
   end
