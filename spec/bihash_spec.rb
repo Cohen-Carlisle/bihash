@@ -258,6 +258,35 @@ describe Bihash do
       _(bh1 == bh2).must_equal false
     end
 
+    describe 'when the bihashes differ on compare_by_identity' do
+      it 'should return true when both bihashes are empty' do
+        bh1 = Bihash[].compare_by_identity
+        bh2 = Bihash[]
+        _(bh1 == bh2).must_equal true
+      end
+
+      it 'should return false for non-empty bihashes' do
+        bh1 = Bihash[one: 1].compare_by_identity
+        bh2 = Bihash[one: 1]
+        _(bh1 == bh2).must_equal false
+      end
+    end
+
+    describe 'when compare_by_identity is set on both bihashes' do
+      it 'should return true when all pairs are equal?' do
+        i, r, f, c = 1.to_i, 1.to_r, 1.to_f, 1.to_c
+        bh1 = Bihash[i => r, f => c].compare_by_identity
+        bh2 = Bihash[i => r, f => c].compare_by_identity
+        _(bh1 == bh2).must_equal true
+      end
+
+      it 'should return false when all pairs are eql? but not equal?' do
+        bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c].compare_by_identity
+        bh2 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c].compare_by_identity
+        _(bh1 == bh2).must_equal false
+      end
+    end
+
     it 'should be aliased to #eql?' do
       bh = Bihash.new
       _(bh.method(:eql?)).must_equal bh.method(:==)
