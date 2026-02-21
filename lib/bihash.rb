@@ -155,14 +155,7 @@ class Bihash
   end
 
   def dig(key, *rest)
-    if @forward.key?(key)
-      @forward.dig(key, *rest)
-    elsif @reverse.key?(key)
-      @reverse.dig(key, *rest)
-    else
-      value = default_value(key)
-      value.nil? || rest.empty? ? value : value.dig(*rest)
-    end
+    rest.empty? ? self[key] : self[key]&.dig(*rest)
   end
 
   def each(&block)
