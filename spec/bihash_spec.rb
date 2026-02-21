@@ -239,6 +239,12 @@ describe Bihash do
     it 'should return false when the argument is not a subset of self' do
       _(Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2]).must_equal false
     end
+
+    it 'should not treat == values as eql? when comparing pairs' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 <= bh2).must_equal false
+    end
   end
 
   describe '#==' do
@@ -326,6 +332,12 @@ describe Bihash do
 
     it 'should return false when the argument is not a superset of self' do
       _(Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3]).must_equal false
+    end
+
+    it 'should not treat == values as eql? when comparing pairs' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 >= bh2).must_equal false
     end
   end
 

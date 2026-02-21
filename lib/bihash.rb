@@ -21,12 +21,12 @@ class Bihash
 
   def <(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs < rhs.send(:merged_hash_attrs)
+    size < rhs.size && subset?(rhs)
   end
 
   def <=(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs <= rhs.send(:merged_hash_attrs)
+    size <= rhs.size && subset?(rhs)
   end
 
   def ==(rhs)
@@ -35,12 +35,12 @@ class Bihash
 
   def >(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs > rhs.send(:merged_hash_attrs)
+    size > rhs.size && rhs.send(:subset?, self)
   end
 
   def >=(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs >= rhs.send(:merged_hash_attrs)
+    size >= rhs.size && rhs.send(:subset?, self)
   end
 
   def [](key)
@@ -398,5 +398,9 @@ class Bihash
     unless obj.is_a?(Bihash)
       raise TypeError, "wrong argument type #{obj.class} (expected Bihash)"
     end
+  end
+
+  def subset?(other_bh)
+    @forward.all? { |k,v| other_bh.key?(k) && other_bh[k].eql?(v) }
   end
 end
