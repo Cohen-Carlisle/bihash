@@ -15,32 +15,34 @@ class Bihash
       arg
     else
       h = Hash.try_convert(arg)
-      h && new_from_hash(h.dup)
+      h && self[h]
     end
   end
 
   def <(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs < rhs.send(:merged_hash_attrs)
+    size < rhs.size && subset?(rhs)
   end
 
   def <=(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs <= rhs.send(:merged_hash_attrs)
+    size <= rhs.size && subset?(rhs)
   end
 
   def ==(rhs)
-    rhs.is_a?(self.class) && merged_hash_attrs == rhs.send(:merged_hash_attrs)
+    rhs.is_a?(self.class) &&
+      size == rhs.size &&
+      merged_hash_attrs.eql?(rhs.send(:merged_hash_attrs))
   end
 
   def >(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs > rhs.send(:merged_hash_attrs)
+    size > rhs.size && rhs.send(:subset?, self)
   end
 
   def >=(rhs)
     raise_error_unless_bihash(rhs)
-    merged_hash_attrs >= rhs.send(:merged_hash_attrs)
+    size >= rhs.size && rhs.send(:subset?, self)
   end
 
   def [](key)
@@ -82,6 +84,9 @@ class Bihash
 
   def compare_by_identity
     raise_error_if_frozen
+    if illegal_state?(compare_by_id: true)
+      raise 'Cannot set compare_by_identity while a key is duplicated outside its own pair'
+    end
     @forward.compare_by_identity
     @reverse.compare_by_identity
     self
@@ -169,8 +174,7 @@ class Bihash
   alias :eql? :==
 
   def except(*args)
-    dup.tap do |bh|
-      bh.default = nil
+    dup_without_defaults.tap do |bh|
       args.each do |arg|
         bh.delete(arg)
       end
@@ -187,7 +191,7 @@ class Bihash
 
   def filter(&block)
     if block_given?
-      dup.tap { |d| d.select!(&block) }
+      dup_without_defaults.tap { |d| d.select!(&block) }
     else
       to_enum(:select)
     end
@@ -241,7 +245,7 @@ class Bihash
   end
 
   def merge!(*other_bhs)
-    # NOTE: merge/merge!/update intentionally do not implement block support yet.
+    # NOTE: merge/merge!/update intentionally do not implement block support yet
     #       see https://github.com/Cohen-Carlisle/bihash/issues/17
     raise_error_if_frozen
     other_bhs.each do |other_bh|
@@ -263,7 +267,7 @@ class Bihash
 
   def reject(&block)
     if block_given?
-      dup.tap { |d| d.reject!(&block) }
+      dup_without_defaults.tap { |d| d.reject!(&block) }
     else
       to_enum(:reject)
     end
@@ -303,9 +307,10 @@ class Bihash
   def_delegator :@forward, :size
 
   def slice(*args)
-    self.class.new.tap do |bh|
+    self.class.new.tap do |new_bh|
+      new_bh.compare_by_identity if compare_by_identity?
       args.each do |arg|
-        bh[arg] = self[arg] if key?(arg)
+        new_bh[arg] = self[arg] if key?(arg)
       end
     end
   end
@@ -339,6 +344,7 @@ class Bihash
   private
 
   def self.new_from_hash(h)
+    h = Hash[h.to_a] if h.compare_by_identity? && RUBY_VERSION.to_f < 3.3
     bihash = new
     bihash.instance_variable_set(:@reverse, h.invert)
     bihash.instance_variable_set(:@forward, h)
@@ -353,9 +359,19 @@ class Bihash
     @default_proc ? @default_proc.call(self, key) : @default
   end
 
-  def illegal_state?
-    fw = @forward
-    (fw.keys | fw.values).size + fw.select { |k,v| k == v }.size < fw.size * 2
+  def dup_without_defaults
+    dup.tap { |bh| bh.default = nil }
+  end
+
+  def illegal_state?(compare_by_id: compare_by_identity?)
+    if compare_by_id
+      unique_members = (@forward.keys + @forward.values).uniq(&:object_id).count
+      duplicate_pairs = @forward.count { |k,v| k.equal?(v) }
+    else
+      unique_members = (@forward.keys | @forward.values).count
+      duplicate_pairs = @forward.count { |k,v| k.eql?(v) }
+    end
+    unique_members + duplicate_pairs < @forward.length * 2
   end
 
   def initialize(*args, &block)
@@ -384,5 +400,9 @@ class Bihash
     unless obj.is_a?(Bihash)
       raise TypeError, "wrong argument type #{obj.class} (expected Bihash)"
     end
+  end
+
+  def subset?(other_bh)
+    @forward.all? { |k,v| other_bh.key?(k) && other_bh[k].eql?(v) }
   end
 end

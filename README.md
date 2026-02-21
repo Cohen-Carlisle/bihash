@@ -1,6 +1,6 @@
 # Bihash
 
-A simple gem that implements a bidrectional hash
+A simple gem that implements a bidirectional hash
 
 ## Usage
 

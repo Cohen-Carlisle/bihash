@@ -41,12 +41,38 @@ describe Bihash do
       _(bh['value']).must_equal :key
     end
 
+    it 'should not carry over the default value' do
+      h = Hash.new(404)
+      bh = Bihash[h]
+      _(bh.default).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over the default_proc' do
+      h = Hash.new { "#{_2} not found" }
+      bh = Bihash[h]
+      _(bh.default_proc).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over compare_by_identity' do
+      h = Hash.new.compare_by_identity
+      h[Array.new] = :array
+      bh = Bihash[h]
+      _(bh.compare_by_identity?).must_equal false
+      _(bh[Array.new]).must_equal :array
+    end
+
     it 'should not accept a hash with duplicate values' do
       _(-> { Bihash[:k1 => 'val', :k2 => 'val'] }).must_raise ArgumentError
     end
 
     it 'should not accept a hash that would result in ambiguous mappings' do
       _(-> { Bihash[1, 2, 2, 3] }).must_raise ArgumentError
+    end
+
+    it 'should not accept a hash that has ambiguous mappings that are ==' do
+      _(-> { Bihash[1, 1.0, 1.0, :anything]}).must_raise ArgumentError
     end
 
     it 'should accept a hash where a key equals its value' do
@@ -152,6 +178,28 @@ describe Bihash do
       _(bh.include?(3)).must_equal false
     end
 
+    it 'should not carry over the default value' do
+      h = Hash.new(404)
+      bh = Bihash.try_convert(h)
+      _(bh.default).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over the default_proc' do
+      h = Hash.new { "#{_2} not found" }
+      bh = Bihash.try_convert(h)
+      _(bh.default_proc).must_be_nil
+      _(bh[:not_a_key]).must_be_nil
+    end
+
+    it 'should not carry over compare_by_identity' do
+      h = Hash.new.compare_by_identity
+      h[Array.new] = :array
+      bh = Bihash.try_convert(h)
+      _(bh.compare_by_identity?).must_equal false
+      _(bh[Array.new]).must_equal :array
+    end
+
     it 'should not accept a hash with duplicate values' do
       _(-> { Bihash.try_convert(:k1 => 1, :k2 => 1) }).must_raise ArgumentError
     end
@@ -163,15 +211,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict subset of self' do
-      _((Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3])).must_equal true
+      _(Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
     it 'should return false when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2] < Bihash[a: 1, b: 2]).must_equal false
     end
 
     it 'should return false when the argument is not a subset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2, c: 3] < Bihash[a: 1, b: 2]).must_equal false
     end
   end
 
@@ -181,27 +229,68 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict subset of self' do
-      _((Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3])).must_equal true
+      _(Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2, c: 3]).must_equal true
     end
 
     it 'should return true when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2] <= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is not a subset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2, c: 3] <= Bihash[a: 1, b: 2]).must_equal false
+    end
+
+    it 'should not treat == values as eql? when comparing pairs' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 <= bh2).must_equal false
     end
   end
 
   describe '#==' do
     it 'should return true when two bihashes have the same pairs' do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[2 => :k2, 1 => :k1]
-      _((bh1 == bh2)).must_equal true
+      _(bh1 == bh2).must_equal true
     end
 
     it 'should return false when two bihashes do not have the same pairs' do
       bh1, bh2 = Bihash[:k1 => 1, :k2 => 2], Bihash[:k1 => 1, :k2 => 99]
-      _((bh1 == bh2)).must_equal false
+      _(bh1 == bh2).must_equal false
+    end
+
+    it 'should compare pairs using #eql? (since all values are also keys)' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 == bh2).must_equal false
+    end
+
+    describe 'when the bihashes differ on compare_by_identity' do
+      it 'should return true when both bihashes are empty' do
+        bh1 = Bihash[].compare_by_identity
+        bh2 = Bihash[]
+        _(bh1 == bh2).must_equal true
+      end
+
+      it 'should return false for non-empty bihashes' do
+        bh1 = Bihash[one: 1].compare_by_identity
+        bh2 = Bihash[one: 1]
+        _(bh1 == bh2).must_equal false
+      end
+    end
+
+    describe 'when compare_by_identity is set on both bihashes' do
+      it 'should return true when all pairs are equal?' do
+        i, r, f, c = 1.to_i, 1.to_r, 1.to_f, 1.to_c
+        bh1 = Bihash[i => r, f => c].compare_by_identity
+        bh2 = Bihash[i => r, f => c].compare_by_identity
+        _(bh1 == bh2).must_equal true
+      end
+
+      it 'should return false when all pairs are eql? but not equal?' do
+        bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c].compare_by_identity
+        bh2 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c].compare_by_identity
+        _(bh1 == bh2).must_equal false
+      end
     end
 
     it 'should be aliased to #eql?' do
@@ -216,15 +305,15 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict superset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2, c: 3] > Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2])).must_equal false
+      _(Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2]).must_equal false
     end
 
     it 'should return false when the argument is not a superset of self' do
-      _((Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3])).must_equal false
+      _(Bihash[a: 1, b: 2] > Bihash[a: 1, b: 2, c: 3]).must_equal false
     end
   end
 
@@ -234,15 +323,21 @@ describe Bihash do
     end
 
     it 'should return true when the argument is a strict superset of self' do
-      _((Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2, c: 3] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return true when the argument is equal to self' do
-      _((Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2])).must_equal true
+      _(Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2]).must_equal true
     end
 
     it 'should return false when the argument is not a superset of self' do
-      _((Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3])).must_equal false
+      _(Bihash[a: 1, b: 2] >= Bihash[a: 1, b: 2, c: 3]).must_equal false
+    end
+
+    it 'should not treat == values as eql? when comparing pairs' do
+      bh1 = Bihash[1.to_i => 1.to_r, 1.to_f => 1.to_c]
+      bh2 = Bihash[1.to_i => 1.to_c, 1.to_f => 1.to_r]
+      _(bh1 >= bh2).must_equal false
     end
   end
 
@@ -338,6 +433,20 @@ describe Bihash do
         _(compacted_bh.object_id).wont_equal bh.object_id
       end
     end
+
+    it 'should return a new bihash with defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.compact.default).must_equal 404
+      bh_default_proc = Bihash.new { "hello #{_2}" }
+      _(bh_default_proc.compact.default(:world)).must_equal "hello world"
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.compact.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.compact.compare_by_identity?).must_equal true
+    end
   end
 
   describe '#compact!' do
@@ -396,6 +505,13 @@ describe Bihash do
       _(clone.default(:not_a_key)).must_equal 'not_a_key'
     end
 
+    it 'should copy compare_by_identity' do
+      bh = Bihash[]
+      _(bh.clone.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.clone.compare_by_identity?).must_equal true
+    end
+
     it 'should copy the frozen state' do
       _(Bihash.new.freeze.clone.frozen?).must_equal true
     end
@@ -414,6 +530,14 @@ describe Bihash do
 
     it 'should raise FrozenError if called on a frozen bihash' do
       _(-> { Bihash.new.freeze.compare_by_identity }).must_raise FrozenError
+    end
+
+    it 'should raise if called when key duplicated (equal?) outside pair' do
+      a, b, c, d = [:a], [:b], [:c], [:d]
+      bh = Bihash[a => b, c => d]
+      d.replace([:a])
+      bh[d] = :anything
+      _(-> { bh.compare_by_identity }).must_raise RuntimeError
     end
   end
 
@@ -476,7 +600,7 @@ describe Bihash do
     it 'should set the default object' do
       bh = Bihash.new { 'proc called' }
       _(bh[:not_a_key]).must_equal 'proc called'
-      _((bh.default = 404)).must_equal 404
+      _(bh.default = 404).must_equal 404
       _(bh[:not_a_key]).must_equal 404
     end
 
@@ -504,14 +628,14 @@ describe Bihash do
     it 'should set the default proc' do
       bh = Bihash.new(:default_object)
       _(bh[:not_a_key]).must_equal :default_object
-      _((bh.default_proc = ->(bihash, key) { '404' })).must_be_instance_of Proc
+      _(bh.default_proc = ->(bihash, key) { '404' }).must_be_instance_of Proc
       _(bh[:not_a_key]).must_equal '404'
     end
 
     it 'should set the default value to nil if argument is nil' do
       bh = Bihash.new(:default_object)
       _(bh[:not_a_key]).must_equal :default_object
-      _((bh.default_proc = nil)).must_be_nil
+      _(bh.default_proc = nil).must_be_nil
       _(bh[:not_a_key]).must_be_nil
     end
 
@@ -618,6 +742,13 @@ describe Bihash do
       _(dup.default(:not_a_key)).must_equal 'not_a_key'
     end
 
+    it 'should copy compare_by_identity' do
+      bh = Bihash[]
+      _(bh.dup.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.dup.compare_by_identity?).must_equal true
+    end
+
     it 'should not copy the frozen state' do
       _(Bihash.new.freeze.dup.frozen?).must_equal false
     end
@@ -662,9 +793,18 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
     end
 
-    it 'should return a vanilla bihash without defaults' do
-      excepted_bh = Bihash.new(404).except
-      _(excepted_bh[:not_a_key]).must_be_nil
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.except.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.except.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.except.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.except.compare_by_identity?).must_equal true
     end
   end
 
@@ -816,6 +956,20 @@ describe Bihash do
       _(receiver).must_equal original_receiver
     end
 
+    it 'should return a new bihash with defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.merge.default).must_equal 404
+      bh_default_proc = Bihash.new { "hello #{_2}" }
+      _(bh_default_proc.merge.default(:world)).must_equal "hello world"
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.merge.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.merge.compare_by_identity?).must_equal true
+    end
+
     it 'should raise TypeError if any arg is not a bihash' do
       _(-> { Bihash.new.merge(Bihash[one: 1], Hash[two: 2]) }).must_raise TypeError
     end
@@ -876,9 +1030,20 @@ describe Bihash do
     end
 
     it 'should raise RuntimeError if called when key duplicated outside pair' do
-      bh = Bihash[[1], [2], [3], [4]]
-      (bh[[4]] << 1).shift
+      a, b, c, d = [:a], [:b], [:c], [:d]
+      bh = Bihash[a => b, c => d]
+      d.replace([:a])
       _(-> { bh.rehash }).must_raise RuntimeError
+    end
+
+    describe 'when #compare_by_identity is set' do
+      it 'should not raise when there are keys that are eql? but not equal?' do
+        bh = Bihash.new.compare_by_identity
+        foo1, foo2 = "foo", "foo"
+        bh[foo1] = 1
+        bh[foo2] = "foo"
+        bh.rehash
+      end
     end
   end
 
@@ -903,6 +1068,20 @@ describe Bihash do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].reject
       _(enum).must_be_instance_of Enumerator
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[1 => :one, 3 => :three]
+    end
+
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.reject { false }.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.reject { false }.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.reject { false }.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.reject { false }.compare_by_identity?).must_equal true
     end
   end
 
@@ -988,6 +1167,20 @@ describe Bihash do
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[2 => :two, 4 => :four]
     end
 
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.select { true }.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.select { true }.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.select { true }.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.select { true }.compare_by_identity?).must_equal true
+    end
+
     it 'should be aliased to #filter' do
       bh = Bihash.new
       _(bh.method(:filter)).must_equal bh.method(:select)
@@ -1055,9 +1248,18 @@ describe Bihash do
       _(bh).must_equal Bihash[1 => :one, 2 => :two, 3 => :three]
     end
 
-    it 'should return a vanilla bihash without default values, etc.' do
-      sliced_bh = Bihash.new(404).slice
-      _(sliced_bh[:not_a_key]).must_be_nil
+    it 'should return a new bihash without defaults copied' do
+      bh_default = Bihash.new(404)
+      _(bh_default.slice.default).must_be_nil
+      bh_default_proc = Bihash.new { 404 }
+      _(bh_default_proc.slice.default_proc).must_be_nil
+    end
+
+    it 'should return a new bihash with compare_by_identity copied' do
+      bh = Bihash[]
+      _(bh.slice.compare_by_identity?).must_equal false
+      bh.compare_by_identity
+      _(bh.slice.compare_by_identity?).must_equal true
     end
   end
 
