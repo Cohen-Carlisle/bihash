@@ -30,7 +30,9 @@ class Bihash
   end
 
   def ==(rhs)
-    rhs.is_a?(self.class) && merged_hash_attrs.eql?(rhs.send(:merged_hash_attrs))
+    rhs.is_a?(self.class) &&
+      size == rhs.size &&
+      merged_hash_attrs.eql?(rhs.send(:merged_hash_attrs))
   end
 
   def >(rhs)
