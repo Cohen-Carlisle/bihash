@@ -720,6 +720,28 @@ describe Bihash do
       bh = Bihash[foo: Bihash[bar: Bihash[baz: 4]]]
       _(bh.dig(:foo, :bur, :boz)).must_be_nil
     end
+
+    describe 'when a key is not found' do
+      it 'should use the default value if present' do
+        bh = Bihash.new(404)
+        _(bh.dig(:not_a_key)).must_equal 404
+      end
+
+      it 'should use the default proc if present' do
+        bh = Bihash.new { "#{_2} not found" }
+        _(bh.dig(:not_a_key)).must_equal "not_a_key not found"
+      end
+
+      it 'should early return nil if the default is nil' do
+        bh = Bihash.new(nil)
+        _(bh.dig(:not_a_key, :dont_try_me)).must_be_nil
+      end
+
+      it 'should continue to dig on the default if it is not nil' do
+        bh = Bihash.new(Bihash[do_try_me: "it worked!"])
+        _(bh.dig(:not_a_key, :do_try_me)).must_equal "it worked!"
+      end
+    end
   end
 
   describe '#dup' do
