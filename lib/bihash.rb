@@ -307,10 +307,10 @@ class Bihash
   def_delegator :@forward, :size
 
   def slice(*args)
-    self.class.new.tap do |bh|
-      bh.compare_by_identity if self.compare_by_identity?
+    self.class.new.tap do |new_bh|
+      new_bh.compare_by_identity if compare_by_identity?
       args.each do |arg|
-        bh[arg] = self[arg] if key?(arg)
+        new_bh[arg] = self[arg] if key?(arg)
       end
     end
   end
