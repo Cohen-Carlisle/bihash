@@ -143,6 +143,26 @@ describe Bihash do
       _(bh).must_include '404'
     end
 
+    it 'should accept capacity as an optimization with and without defaults' do
+      bh1 = Bihash.new(capacity: 42)
+      _(bh1[:not_a_key]).must_be_nil
+
+      bh2 = Bihash.new(404, capacity: 42)
+      _(bh2[:not_a_key]).must_equal 404
+
+      bh3 = Bihash.new(capacity: 42) { "#{_2} not found" }
+      _(bh3[404]).must_equal '404 not found'
+    end
+
+    it 'should not accept arbitrary keyword arguments' do
+      _(-> { Bihash.new(keywords: true) }).must_raise ArgumentError
+    end
+
+    it 'should accept a default that is a hash' do
+      bh = Bihash.new({hash: true})
+      _(bh[:not_a_key]).must_equal({hash: true})
+    end
+
     it 'should not accept both an object and a block' do
       _(-> { Bihash.new('default 1') { 'default 2' } }).must_raise ArgumentError
     end
@@ -695,6 +715,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].delete_if
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1, k2| k1.even? }).must_equal Bihash[1 => :one, 3 => :three]
     end
   end
@@ -792,6 +813,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[:k1 => 'v1', :k2 => 'v2'].each
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 2
       _(enum.each { |pair| pair }).must_equal Bihash[:k1 => 'v1', :k2 => 'v2']
     end
 
@@ -938,6 +960,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].keep_if
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1, k2| k1.even? }).must_equal Bihash[2 => :two, 4 => :four]
     end
   end
@@ -1089,6 +1112,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].reject
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[1 => :one, 3 => :three]
     end
 
@@ -1128,6 +1152,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].reject!
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1, k2| k1.even? }).must_equal Bihash[1 => :one, 3 => :three]
     end
   end
@@ -1186,6 +1211,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1,k2| k1.even? }).must_equal Bihash[2 => :two, 4 => :four]
     end
 
@@ -1230,6 +1256,7 @@ describe Bihash do
     it 'should return an enumerator if not given a block' do
       enum = Bihash[1 => :one, 2 => :two, 3 => :three, 4 => :four].select!
       _(enum).must_be_instance_of Enumerator
+      _(enum.size).must_equal 4
       _(enum.each { |k1, k2| k1.even? }).must_equal Bihash[2 => :two, 4 => :four]
     end
 

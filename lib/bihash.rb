@@ -150,19 +150,12 @@ class Bihash
       @forward.each { |k,v| delete(k) if yield(k,v) }
       self
     else
-      to_enum(:delete_if)
+      to_enum(:delete_if) { size }
     end
   end
 
   def dig(key, *rest)
-    if @forward.key?(key)
-      @forward.dig(key, *rest)
-    elsif @reverse.key?(key)
-      @reverse.dig(key, *rest)
-    else
-      value = default_value(key)
-      value.nil? || rest.empty? ? value : value.dig(*rest)
-    end
+    rest.empty? ? self[key] : self[key]&.dig(*rest)
   end
 
   def each(&block)
@@ -170,7 +163,7 @@ class Bihash
       @forward.each(&block)
       self
     else
-      to_enum(:each)
+      to_enum(:each) { size }
     end
   end
 
@@ -200,7 +193,7 @@ class Bihash
     if block_given?
       dup_without_defaults.tap { |d| d.select!(&block) }
     else
-      to_enum(:select)
+      to_enum(:select) { size }
     end
   end
 
@@ -211,7 +204,7 @@ class Bihash
       keep_if(&block)
       old_size == size ? nil : self
     else
-      to_enum(:select!)
+      to_enum(:select!) { size }
     end
   end
 
@@ -237,7 +230,7 @@ class Bihash
       @forward.each { |k,v| delete(k) unless yield(k,v) }
       self
     else
-      to_enum(:keep_if)
+      to_enum(:keep_if) { size }
     end
   end
 
@@ -276,7 +269,7 @@ class Bihash
     if block_given?
       dup_without_defaults.tap { |d| d.reject!(&block) }
     else
-      to_enum(:reject)
+      to_enum(:reject) { size }
     end
   end
 
@@ -287,7 +280,7 @@ class Bihash
       delete_if(&block)
       old_size == size ? nil : self
     else
-      to_enum(:reject!)
+      to_enum(:reject!) { size }
     end
   end
 
@@ -381,7 +374,7 @@ class Bihash
     unique_members + duplicate_pairs < @forward.length * 2
   end
 
-  def initialize(*args, &block)
+  def initialize(*args, capacity: 0, &block)
     raise_error_if_frozen
     if block_given? && !args.empty?
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0)"
@@ -389,7 +382,11 @@ class Bihash
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
     end
     super()
-    @forward, @reverse = {}, {}
+    if RUBY_VERSION.to_f < 3.4
+      @forward, @reverse = {}, {}
+    else
+      @forward, @reverse = Hash.new(capacity:), Hash.new(capacity:)
+    end
     @default, @default_proc = args[0], block
   end
 
