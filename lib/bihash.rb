@@ -374,7 +374,7 @@ class Bihash
     unique_members + duplicate_pairs < @forward.length * 2
   end
 
-  def initialize(*args, &block)
+  def initialize(*args, capacity: 0, &block)
     raise_error_if_frozen
     if block_given? && !args.empty?
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0)"
@@ -382,7 +382,11 @@ class Bihash
       raise ArgumentError, "wrong number of arguments (#{args.size} for 0..1)"
     end
     super()
-    @forward, @reverse = {}, {}
+    if RUBY_VERSION.to_f < 3.4
+      @forward, @reverse = {}, {}
+    else
+      @forward, @reverse = Hash.new(capacity:), Hash.new(capacity:)
+    end
     @default, @default_proc = args[0], block
   end
 
