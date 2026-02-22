@@ -150,7 +150,7 @@ class Bihash
       @forward.each { |k,v| delete(k) if yield(k,v) }
       self
     else
-      to_enum(:delete_if)
+      to_enum(:delete_if) { size }
     end
   end
 
@@ -163,7 +163,7 @@ class Bihash
       @forward.each(&block)
       self
     else
-      to_enum(:each)
+      to_enum(:each) { size }
     end
   end
 
@@ -193,7 +193,7 @@ class Bihash
     if block_given?
       dup_without_defaults.tap { |d| d.select!(&block) }
     else
-      to_enum(:select)
+      to_enum(:select) { size }
     end
   end
 
@@ -204,7 +204,7 @@ class Bihash
       keep_if(&block)
       old_size == size ? nil : self
     else
-      to_enum(:select!)
+      to_enum(:select!) { size }
     end
   end
 
@@ -230,7 +230,7 @@ class Bihash
       @forward.each { |k,v| delete(k) unless yield(k,v) }
       self
     else
-      to_enum(:keep_if)
+      to_enum(:keep_if) { size }
     end
   end
 
@@ -269,7 +269,7 @@ class Bihash
     if block_given?
       dup_without_defaults.tap { |d| d.reject!(&block) }
     else
-      to_enum(:reject)
+      to_enum(:reject) { size }
     end
   end
 
@@ -280,7 +280,7 @@ class Bihash
       delete_if(&block)
       old_size == size ? nil : self
     else
-      to_enum(:reject!)
+      to_enum(:reject!) { size }
     end
   end
 
